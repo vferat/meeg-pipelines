@@ -8,6 +8,7 @@ neurodocker generate docker ^
   --run  "micromamba install -y -n smriprep -c conda-forge 'vtk>=9.3=*osmesa*' && micromamba clean --all --yes" ^
   --run "micromamba install -y -n smriprep -c conda-forge 'nodejs>=20' && micromamba clean --all --yes" ^
   --copy . /meeg-pipelines ^
+  --run "rm -rf /meeg-pipelines/validation" ^
   --run "micromamba run -n smriprep pip install --no-cache-dir -e /meeg-pipelines[all]" ^
   --copy ./docker/entrypoint.sh /usr/local/bin/entrypoint.sh ^
   --run "chmod +x /usr/local/bin/entrypoint.sh" ^

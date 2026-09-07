@@ -46,6 +46,7 @@ RUN micromamba install -y -n smriprep -c conda-forge 'vtk>=9.3=*osmesa*' && micr
 RUN micromamba install -y -n smriprep -c conda-forge 'nodejs>=20' && micromamba clean --all --yes
 COPY [".", \
       "/meeg-pipelines"]
+RUN rm -rf /meeg-pipelines/validation
 RUN micromamba run -n smriprep pip install --no-cache-dir -e /meeg-pipelines[all]
 COPY ["./docker/entrypoint.sh", \
       "/usr/local/bin/entrypoint.sh"]
@@ -138,6 +139,12 @@ RUN printf '{ \
           "/meeg-pipelines" \
         ], \
         "destination": "/meeg-pipelines" \
+      } \
+    }, \
+    { \
+      "name": "run", \
+      "kwds": { \
+        "command": "rm -rf /meeg-pipelines/validation" \
       } \
     }, \
     { \
