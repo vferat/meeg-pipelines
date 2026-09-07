@@ -54,7 +54,7 @@ jobs:
         run: docker run -e FS_LICENSE='/workdir/license.txt' -v ${{ github.workspace }}:/workdir meegpype_pytest /bin/bash -c "cd /workdir && pip install -U .[test] && pytest meegpype --cov=meegpype --cov-report=xml --cov-config=pyproject.toml"
       
       - name: Upload to codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v7
         with:
           files: ./coverage.xml
           flags: unittests  # optional
