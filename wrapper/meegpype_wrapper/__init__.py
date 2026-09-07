@@ -1,0 +1,1 @@
+DOCKER_IMAGE = "ghcr.io/vferat/meegpype:smriprep-0.19.1-dev"

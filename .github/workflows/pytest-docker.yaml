@@ -1,0 +1,63 @@
+name: pytest-docker
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number }}-${{ github.event.ref }}
+  cancel-in-progress: true
+on:  # yamllint disable-line rule:truthy
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 8 * * 1'
+
+jobs:
+  pytest-docker:
+    timeout-minutes: 45
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.9
+
+      - name: Install neurodocker
+        run: pip install neurodocker
+
+      - name: Generate Dockerfile
+        run: |
+             chmod +x ./docker/generate_dockerfile.sh
+             ./docker/generate_dockerfile.sh
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Build the Docker image
+        run: docker build . -t meegpype_pytest
+      
+      - name: Create FreeSurfer license file
+        run: echo "$FS_LICENSE" > license.txt
+        env:
+          FS_LICENSE: ${{ secrets.FS_LICENSE }}
+
+      - name: Run the Docker image
+        run: docker run -e FS_LICENSE='/workdir/license.txt' -v ${{ github.workspace }}:/workdir meegpype_pytest /bin/bash -c "cd /workdir && pip install -U .[test] && pytest meegpype --cov=meegpype --cov-report=xml --cov-config=pyproject.toml"
+      
+      - name: Upload to codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.xml
+          flags: unittests  # optional
+          name: codecov-umbrella  # optional
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true  # optional (default = false)

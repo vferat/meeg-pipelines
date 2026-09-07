@@ -1,0 +1,2 @@
+include meegpype/data/*
+exclude meegpype/conftest.py
