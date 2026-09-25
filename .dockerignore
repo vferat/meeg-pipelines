@@ -1,0 +1,12 @@
+validation/
+wrapper/
+docker/
+BACKUP/
+doc/
+
+AGENT.md
+DEVELOPMENT.md
+README.md
+
+license.txt
+junit-results.xml
