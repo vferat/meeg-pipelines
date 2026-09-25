@@ -10,7 +10,7 @@ export DEBIAN_FRONTEND=noninteractive
 # ------------------------------------------------------------------
 
 # Use VTK/PyVista off-screen rendering.
-export PYVISTA_OFF_SCREEN=true
+unset PYVISTA_OFF_SCREEN
 export PYVISTA_USE_PANEL=false
 
 # Software OpenGL
@@ -19,7 +19,6 @@ unset PYOPENGL_PLATFORM
 
 # Do NOT force Qt offscreen when using Xvfb
 unset QT_QPA_PLATFORM
-export QT_XCB_GL_INTEGRATION=none
 
 # MNE 3D backend
 export MNE_3D_BACKEND=pyvistaqt
