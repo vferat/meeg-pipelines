@@ -23,11 +23,9 @@ dependencies = [
   'packaging',
   'psutil',
   'pybids',
-  'mne[full]>=1.10.1',
+  'mne[full]==1.12.1',
   'mne-bids',
   'h5io',
-  'pyvista',
-  'pyside6',
   'smriprep',
 ]
 description = 'MEG and EEG pipelines.'
