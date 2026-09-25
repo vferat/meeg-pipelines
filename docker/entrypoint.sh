@@ -14,17 +14,19 @@ export PYVISTA_OFF_SCREEN=true
 export PYVISTA_USE_PANEL=false
 
 # Software OpenGL
-export PYOPENGL_PLATFORM=osmesa
 export LIBGL_ALWAYS_SOFTWARE=1
+unset PYOPENGL_PLATFORM
 
 # Do NOT force Qt offscreen when using Xvfb
 unset QT_QPA_PLATFORM
+export QT_XCB_GL_INTEGRATION=none
 
 # MNE 3D backend
 export MNE_3D_BACKEND=pyvistaqt
 
 # Avoid multisampling on software rendering
-export MNE_3D_OPTION_MULTI_SAMPLES=0
+export MNE_3D_OPTION_MULTI_SAMPLES=1
+export MNE_3D_OPTION_ANTIALIAS=false
 
 # ------------------------------------------------------------------
 # Xvfb
