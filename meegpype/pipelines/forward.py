@@ -21,8 +21,10 @@ def run_forward_pipeline(bids_root,
                          output_dir,
                          subjects,
                          work_dir=None,
+                         bem_method="basic",
                          surface_src=False,
                          volume_src=True,
+                        
                          pos=5,
                          n_procs=None):
     # enable logging
@@ -75,6 +77,7 @@ def run_forward_pipeline(bids_root,
                     subject=subject,
                     subjects_dir=subjects_dir,
                     spaces=spaces,
+                    bem_method=bem_method,
                     volume_src=volume_src,
                     surface_src=surface_src,
                     pos=pos

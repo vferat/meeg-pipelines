@@ -19,7 +19,7 @@ from meegpype.interfaces.mne import (
 
 
 def init_single_subject_workflow(bids_root, output_dir, subject, subjects_dir, spaces,
-                                 volume_src=True, pos=5, surface_src=False):
+                                 bem_method="basic", volume_src=True, pos=5, surface_src=False):
 
     subject_dir = os.path.join(output_dir, f'sub-{subject}')
     subject_data = collect_subject_data(bids_root, subject)
@@ -88,7 +88,7 @@ def init_single_subject_workflow(bids_root, output_dir, subject, subjects_dir, s
     wf.connect(anat_preproc_wf, 'outputnode.subjects_dir', fiducials_wf, 'inputnode.subjects_dir')
 
     # MEG anat
-    meg_anat_wf = init_meg_anat_wf(volume_src=volume_src, surface_src=surface_src, name="meg_anat_wf")
+    meg_anat_wf = init_meg_anat_wf(volume_src=volume_src, surface_src=surface_src, bem_method=bem_method, name="meg_anat_wf")
     wf.connect(anat_preproc_wf, 'outputnode.subject_id', meg_anat_wf, 'inputnode.subject_id')
     wf.connect(anat_preproc_wf, 'outputnode.subjects_dir', meg_anat_wf, 'inputnode.subjects_dir')
     wf.connect(confignode, 'conductivity', meg_anat_wf, 'inputnode.conductivity')

@@ -30,6 +30,11 @@ def run() -> None:
         help="Path where intermediate results should be stored.",
     )
     parser.add_argument(
+        "--bem-method", 
+        help="Method to use for BEM surface generation. Options: 'basic' or 'refined'. Default is 'basic'.",
+        default="basic",
+    )
+    parser.add_argument(
         "--surface-src", "--surface-src",
         action="store_true",
         help="Use a surface source distribution.",
@@ -54,5 +59,12 @@ def run() -> None:
     )
     args = parser.parse_args()
 
-    run_forward_pipeline(bids_root=args.bids_dir, output_dir=args.output_dir, subjects=args.participant_label, work_dir=args.work_dir,
-                         volume_src=args.volume_src, surface_src=args.surface_src, pos=args.pos, n_procs=args.nprocs)
+    run_forward_pipeline(bids_root=args.bids_dir, 
+                         output_dir=args.output_dir,
+                         subjects=args.participant_label,
+                         work_dir=args.work_dir,
+                         bem_method=args.bem_method,
+                         volume_src=args.volume_src,
+                         surface_src=args.surface_src,
+                         pos=args.pos,
+                         n_procs=args.nprocs)
