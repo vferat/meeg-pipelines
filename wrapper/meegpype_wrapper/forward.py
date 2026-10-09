@@ -31,6 +31,12 @@ def add_parser(subparsers) -> None:
         help="Path where intermediate results should be stored.",
     )
     subparser.add_argument(
+        "--bem-method",
+        help="Method to use for BEM surface generation. Options: 'basic' or 'refined'. Default is 'basic'.",
+        type=str,
+        default="basic",
+    )
+    subparser.add_argument(
         "--surface-src", "--surface-src",
         action="store_true",
         help="Use a surface source distribution.",
@@ -138,6 +144,10 @@ def run(args, unknown_args) -> None:
         unknown_args.extend(["--participant-label"])
         unknown_args.extend(participant_label)
 
+    # bem-method
+    if args.bem_method:
+        unknown_args.extend(["--bem-method", args.bem_method])
+    
     # surface-src
     if args.surface_src:
         unknown_args.extend(["--surface-src"])

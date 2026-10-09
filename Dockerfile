@@ -31,23 +31,25 @@ RUN apt-get update -qq \
                   ffmpeg \
                   graphviz \
                   libsm6 \
+                  libxcb-cursor0 \
+                  libxcb-icccm4 \
+                  libxcb-keysyms1 \
+                  libxcb-xkb1 \
                   libxext6 \
+                  libxkbcommon-x11-0 \
                   x11-utils \
                   xvfb \
            && rm -rf /var/lib/apt/lists/*
 RUN apt-get update -qq \
            && apt-get install -y -q --no-install-recommends \
-                  graphviz \
                   libegl1 \
                   libgl1-mesa-dri \
                   libosmesa6 \
            && rm -rf /var/lib/apt/lists/*
-RUN micromamba install -y -n smriprep -c conda-forge 'vtk>=9.3=*osmesa*' && micromamba clean --all --yes
 RUN micromamba install -y -n smriprep -c conda-forge 'nodejs>=20' && micromamba clean --all --yes
 COPY [".", \
       "/meeg-pipelines"]
-RUN rm -rf /meeg-pipelines/validation
-RUN micromamba run -n smriprep pip install --no-cache-dir -e /meeg-pipelines[all]
+RUN micromamba run -n smriprep pip install --no-cache-dir -e /meeg-pipelines
 COPY ["./docker/entrypoint.sh", \
       "/usr/local/bin/entrypoint.sh"]
 RUN chmod +x /usr/local/bin/entrypoint.sh
@@ -90,7 +92,12 @@ RUN printf '{ \
           "libsm6", \
           "libxext6", \
           "xvfb", \
-          "x11-utils" \
+          "x11-utils", \
+          "libxkbcommon-x11-0", \
+          "libxcb-icccm4", \
+          "libxcb-keysyms1", \
+          "libxcb-xkb1", \
+          "libxcb-cursor0" \
         ], \
         "opts": null \
       } \
@@ -98,14 +105,13 @@ RUN printf '{ \
     { \
       "name": "run", \
       "kwds": { \
-        "command": "apt-get update -qq \\\\\\n    && apt-get install -y -q --no-install-recommends \\\\\\n           ffmpeg \\\\\\n           graphviz \\\\\\n           libsm6 \\\\\\n           libxext6 \\\\\\n           x11-utils \\\\\\n           xvfb \\\\\\n    && rm -rf /var/lib/apt/lists/*" \
+        "command": "apt-get update -qq \\\\\\n    && apt-get install -y -q --no-install-recommends \\\\\\n           ffmpeg \\\\\\n           graphviz \\\\\\n           libsm6 \\\\\\n           libxcb-cursor0 \\\\\\n           libxcb-icccm4 \\\\\\n           libxcb-keysyms1 \\\\\\n           libxcb-xkb1 \\\\\\n           libxext6 \\\\\\n           libxkbcommon-x11-0 \\\\\\n           x11-utils \\\\\\n           xvfb \\\\\\n    && rm -rf /var/lib/apt/lists/*" \
       } \
     }, \
     { \
       "name": "install", \
       "kwds": { \
         "pkgs": [ \
-          "graphviz", \
           "libosmesa6", \
           "libegl1", \
           "libgl1-mesa-dri" \
@@ -116,13 +122,7 @@ RUN printf '{ \
     { \
       "name": "run", \
       "kwds": { \
-        "command": "apt-get update -qq \\\\\\n    && apt-get install -y -q --no-install-recommends \\\\\\n           graphviz \\\\\\n           libegl1 \\\\\\n           libgl1-mesa-dri \\\\\\n           libosmesa6 \\\\\\n    && rm -rf /var/lib/apt/lists/*" \
-      } \
-    }, \
-    { \
-      "name": "run", \
-      "kwds": { \
-        "command": "micromamba install -y -n smriprep -c conda-forge '"'"'vtk>=9.3=*osmesa*'"'"' && micromamba clean --all --yes" \
+        "command": "apt-get update -qq \\\\\\n    && apt-get install -y -q --no-install-recommends \\\\\\n           libegl1 \\\\\\n           libgl1-mesa-dri \\\\\\n           libosmesa6 \\\\\\n    && rm -rf /var/lib/apt/lists/*" \
       } \
     }, \
     { \
@@ -144,13 +144,7 @@ RUN printf '{ \
     { \
       "name": "run", \
       "kwds": { \
-        "command": "rm -rf /meeg-pipelines/validation" \
-      } \
-    }, \
-    { \
-      "name": "run", \
-      "kwds": { \
-        "command": "micromamba run -n smriprep pip install --no-cache-dir -e /meeg-pipelines[all]" \
+        "command": "micromamba run -n smriprep pip install --no-cache-dir -e /meeg-pipelines" \
       } \
     }, \
     { \

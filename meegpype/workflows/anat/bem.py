@@ -18,7 +18,7 @@ def generate_bem_workflow(
         subject_id=None,
         subjects_dir=None,
         name="freesurfer_bem_surfaces",
-        default=True):
+        method="basic"):
 
     # utils
     def generate_subject_dir_path(subjects_dir, subject_id):
@@ -36,7 +36,7 @@ def generate_bem_workflow(
         interface=IdentityInterface(fields=["subject_id", "subjects_dir", "brain_surf", 'inner_skull_surf']), name="outputnode"
     )
     
-    if default:
+    if method == "basic":
         watershed = Node(MakeWatershedBEM(), name='watershed')
         watershed.inputs.overwrite = True
 
@@ -48,7 +48,7 @@ def generate_bem_workflow(
         wf.connect(watershed, 'brain_surf', outputnode, 'brain_surf')
         wf.connect(watershed, 'inner_skull', outputnode, 'inner_skull_surf')
 
-    else:    
+    elif method == "refined":
         fs_source = Node(FreeSurferSource(), name='fs_source')
         fs_source.hemi = 'both'
 
@@ -155,4 +155,6 @@ def generate_bem_workflow(
         wf.connect(datasink_brain_surf, 'out_file', outputnode, 'brain_surf')
         wf.connect(datasink_inner_skull_surf, 'out_file', outputnode, 'inner_skull_surf')
 
+    else:
+        raise ValueError(f"Unknown method: {method}")
     return wf

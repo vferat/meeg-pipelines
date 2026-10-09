@@ -4,7 +4,7 @@ requires = ['setuptools >= 64.0.0']
 
 [project]
 authors = [
-  {email = 'victor.ferat@unige.ch', name = 'Victor Férat'},
+  {email = 'victor.ferat@fcbg.ch', name = 'Victor Férat'},
 ]
 classifiers = [
   'License :: OSI Approved :: MIT License',
@@ -23,15 +23,9 @@ dependencies = [
   'packaging',
   'psutil',
   'pybids',
-  'matplotlib',
-  'mne>=1.10.1',
+  'mne[full]==1.12.1',
   'mne-bids',
   'h5io',
-  'pyvista',
-  'pyvistaqt',
-  'vtk',
-  'pyside6',
-  'matplotlib',
   'smriprep',
 ]
 description = 'MEG and EEG pipelines.'
@@ -43,7 +37,7 @@ keywords = [
 ]
 license = {file = 'LICENSE'}
 maintainers = [
-  {email = 'victor.ferat@unige.ch', name = 'Victor Férat'},
+  {email = 'victor.ferat@fcbg.ch', name = 'Victor Férat'},
 ]
 name = 'meegpype'
 readme = 'README.md'
@@ -96,9 +90,6 @@ test = [
   'pytest-cov',
   'pytest-timeout',
   'pytest>=8.0',
-]
-headless = [
-  'pyvistaqt',
 ]
 
 [project.scripts]

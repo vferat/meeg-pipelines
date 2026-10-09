@@ -32,7 +32,7 @@ Additional parameters can be added to the command:
 - `--nprocs`: to specify the number of processes to use (default: 1)
 - `--surface-src` instead of `--volume-src`: to use surface source space instead of volume source space.
 - `--pos`: when using a volume source space ( `--volume-src` flag), define the grid spacing in millimeters (default: 5mm).
-
+- `--bem-method`: to specify the BEM method to use, can be either `default`  to use the watershed_bem algorithm or `refined` to use a BEM model based on a refined brain mask.
 
 #### Apptainer
 

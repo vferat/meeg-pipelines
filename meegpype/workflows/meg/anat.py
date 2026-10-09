@@ -33,6 +33,7 @@ def init_meg_anat_wf(
     name="meg_anat_workflow",
     surface_src=True,
     volume_src=True,
+    bem_method="basic",
     work_dir=None):
     # Initiate workflow
     wf = Workflow(name=name, base_dir=work_dir)
@@ -76,7 +77,7 @@ def init_meg_anat_wf(
         ),
     )
     ### Watershed BEM
-    watershed_bem = generate_bem_workflow(name="watershed_bem_workflow")
+    watershed_bem = generate_bem_workflow(name="watershed_bem_workflow", method=bem_method)
 
     ### Setup forward
     setup_forward_model = Node(SetupForwardModel(), name="setup_forward_model")
