@@ -64,9 +64,10 @@ def add_parser(subparsers) -> None:
         help="Maximum number of threads across all processes.",
     )
     subparser.add_argument(
-        "--apptainer",
-        action="store_true",
-        help="Use apptainer instead of docker.",
+        "--engine",
+        help="Engine to use for running the pipeline. Can be 'docker' or 'apptainer'. Default is 'docker'.",
+        type=str,
+        default="docker",
     )
     return(subparser)
 
@@ -74,11 +75,11 @@ def add_parser(subparsers) -> None:
 def run(args, unknown_args) -> None:
     """Run forward() command."""
 
-    apptainer = args.apptainer
-    if apptainer:
+    engine = args.engine
+    if engine == "apptainer":
         command = ['apptainer', 'exec', '--cleanenv', "--containall", "--writable-tmpfs"]
     else:
-        command = ['docker', 'run', '--rm']
+        command = ['docker', 'run', '--rm', '--pull=always']
     main_args = []
 
     # bids_dir
@@ -86,7 +87,7 @@ def run(args, unknown_args) -> None:
     if not os.path.exists(bids_dir):
         raise FileNotFoundError(f"BIDS directory {bids_dir} does not exist.")
 
-    if apptainer:
+    if engine == "apptainer":
         command.extend(["-B", f"{bids_dir}:/data"])
     else:
         command.extend(["-v", f"{bids_dir}:/data"])
@@ -97,7 +98,7 @@ def run(args, unknown_args) -> None:
     if not os.path.exists(output_dir):
         os.makedirs(output_dir, exist_ok=True)
 
-    if apptainer:
+    if engine == "apptainer":
         command.extend(["-B", f"{output_dir}:/out"])
     else:
         command.extend(["-v", f"{output_dir}:/out"])
@@ -110,7 +111,7 @@ def run(args, unknown_args) -> None:
             os.makedirs(work_dir, exist_ok=True)
     else:
         work_dir = tempfile.mkdtemp(prefix="meegpype_workdir_")
-    if apptainer:
+    if engine == "apptainer":
         command.extend(["-B", f"{work_dir}:/scratch"])
     else:
         command.extend(["-v", f"{work_dir}:/scratch"])
@@ -118,7 +119,7 @@ def run(args, unknown_args) -> None:
 
     # templateflow_dir
     templateflow_dir = tempfile.mkdtemp(prefix="meegpype_workdir_")
-    if apptainer:
+    if engine == "apptainer":
         command.extend(["-B", f"{templateflow_dir}:/opt/templateflow"])
         command.extend(["--env", "TEMPLATEFLOW_HOME=/opt/templateflow"])
 
@@ -127,7 +128,7 @@ def run(args, unknown_args) -> None:
     if fs_license_file is not None:
         if not os.path.exists(fs_license_file):
             raise FileNotFoundError(f"FreeSurfer license file {fs_license_file} does not exist.")
-        if apptainer:
+        if engine == "apptainer":
             command.extend(["-B", f"{fs_license_file}:/opt/freesurfer/license.txt"])
             command.extend(["--env", "FS_LICENSE=/opt/freesurfer/license.txt"])
         else:
@@ -164,14 +165,14 @@ def run(args, unknown_args) -> None:
         unknown_args.extend(["--nprocs", str(args.nprocs)])
 
     # image
-    if apptainer:
+    if engine == "apptainer":
         docker_image = "docker://" + DOCKER_IMAGE
     else:
         docker_image = DOCKER_IMAGE
     command.extend([docker_image])
 
     # Command
-    if apptainer:
+    if engine == "apptainer":
         command.extend(["/usr/local/bin/entrypoint.sh"])
     command.extend(["meegpype-forward"])
     command.extend(main_args)
