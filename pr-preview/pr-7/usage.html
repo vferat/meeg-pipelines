@@ -264,7 +264,7 @@ Apptainer when <code class="docutils literal notranslate"><span class="pre">--ap
                                 <span class="p">[</span><span class="o">-</span><span class="n">w</span> <span class="n">WORK_DIR</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">bem</span><span class="o">-</span><span class="n">method</span> <span class="n">BEM_METHOD</span><span class="p">]</span>
                                 <span class="p">[</span><span class="o">--</span><span class="n">surface</span><span class="o">-</span><span class="n">src</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">volume</span><span class="o">-</span><span class="n">src</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">pos</span> <span class="n">POS</span><span class="p">]</span>
                                 <span class="p">[</span><span class="o">--</span><span class="n">fs</span><span class="o">-</span><span class="n">license</span><span class="o">-</span><span class="n">file</span> <span class="n">FS_LICENSE_FILE</span><span class="p">]</span>
-                                <span class="p">[</span><span class="o">--</span><span class="n">nprocs</span> <span class="n">NPROCS</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">apptainer</span><span class="p">]</span>
+                                <span class="p">[</span><span class="o">--</span><span class="n">nprocs</span> <span class="n">NPROCS</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">engine</span> <span class="n">ENGINE</span><span class="p">]</span>
                                 <span class="n">bids_dir</span> <span class="n">output_dir</span> <span class="n">analysis_level</span>
 </pre></div>
 </div>
@@ -315,9 +315,9 @@ Processing stage to be run, only “participant” in the case of meegpype-forwa
 <dd><p>Maximum number of threads across all processes.</p>
 <p>Default: <code class="docutils literal notranslate"><span class="pre">1</span></code></p>
 </dd>
-<dt><kbd>--apptainer</kbd></dt>
-<dd><p>Use apptainer instead of docker.</p>
-<p>Default: <code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+<dt><kbd>--engine</kbd></dt>
+<dd><p>Engine to use for running the pipeline. Can be ‘docker’ or ‘apptainer’. Default is ‘docker’.</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">'docker'</span></code></p>
 </dd>
 </dl>
 </section>
