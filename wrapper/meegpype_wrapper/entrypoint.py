@@ -7,7 +7,7 @@ from .fslabelling import add_parser as fslabelling_add_parser
 from .fslabelling import run as run_fslabelling
 
 
-def run() -> None:
+def get_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="meegpype-wrapper", description="Run meegpype-wrapper"
     )
@@ -15,6 +15,11 @@ def run() -> None:
     forward_add_parser(subparsers)
     fslr_add_parser(subparsers)
     fslabelling_add_parser(subparsers)
+    return parser
+
+
+def run() -> None:
+    parser = get_parser()
 
     args, unknown_args = parser.parse_known_args()
 

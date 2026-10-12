@@ -46,7 +46,10 @@ jobs:
             libxcb-xfixes0 \
             libxcb-xinerama0
       - uses: astral-sh/setup-uv@v7
-      - run: uv pip install --quiet --system .[doc]
+      - name: Install meegpype
+        run: uv pip install --quiet --system .[doc]
+      - name: Install meegpype-wrapper
+        run: uv pip install ./wrapper
       - name: Download data
         run: |
           for attempt in 1 2 3; do

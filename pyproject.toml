@@ -68,6 +68,8 @@ doc = [
   'sphinx-gallery',
   'sphinx-issues',
   'sphinxcontrib-bibtex',
+  'sphinx-argparse',
+  'myst_parser',
 ]
 full = [
   'meegpype[all]',

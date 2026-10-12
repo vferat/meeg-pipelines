@@ -4,7 +4,7 @@ import tempfile
 from . import DOCKER_IMAGE
 
 def add_parser(subparsers) -> None:
-    subparser = subparsers.add_parser("forward", help="Run forward piepline")
+    subparser = subparsers.add_parser("forward", help="Run forward pipeline")
     subparser.add_argument(
         "bids_dir",
         type=os.path.abspath,
@@ -37,12 +37,12 @@ def add_parser(subparsers) -> None:
         default="basic",
     )
     subparser.add_argument(
-        "--surface-src", "--surface-src",
+        "--surface-src",
         action="store_true",
         help="Use a surface source distribution.",
     )
     subparser.add_argument(
-        "--volume-src", "--volume-src",
+        "--volume-src",
         action="store_true",
         help="Use a volumetric source distribution.",
     )
@@ -62,7 +62,6 @@ def add_parser(subparsers) -> None:
         default=1,
         type=int,
         help="Maximum number of threads across all processes.",
-
     )
     subparser.add_argument(
         "--apptainer",

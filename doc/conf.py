@@ -55,6 +55,8 @@ extensions = [
     "sphinx_design",
     "sphinx_gallery.gen_gallery",
     "sphinx_issues",
+    "myst_parser",
+    "sphinxarg.ext",
 ]
 
 templates_path = ["_templates"]
@@ -87,6 +89,10 @@ html_title = project
 
 # Documentation to change footer icons:
 # https://pradyunsg.me/furo/customisation/footer/#changing-footer-icons
+version_match = "dev" if "dev" in release else release
+
+# Documentation to change footer icons:
+# https://pradyunsg.me/furo/customisation/footer/#changing-footer-icons
 html_theme_options = {
     "footer_icons": [
         {
@@ -113,7 +119,7 @@ autoclass_content = "class"
 
 # -- intersphinx -----------------------------------------------------------------------
 intersphinx_mapping = get_intersphinx_mapping(
-    packages={"matplotlib", "mne", "numpy", "pandas", "python", "scipy", "sklearn"}
+    packages={"matplotlib", "mne", "numpy", "pandas", "python", "scipy"}
 )
 intersphinx_timeout = 5
 

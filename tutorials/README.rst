@@ -1,4 +1,4 @@
-meegpzpe tutorials
+meegpype tutorials
 ===================
 
 tutorials...
