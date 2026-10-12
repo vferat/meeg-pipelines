@@ -1,0 +1,7 @@
+meegpype.interfaces.mne.forward module
+======================================
+
+.. automodule:: meegpype.interfaces.mne.forward
+   :members:
+   :show-inheritance:
+   :undoc-members:

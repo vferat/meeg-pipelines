@@ -1,0 +1,7 @@
+meegpype.interfaces.mne.coreg module
+====================================
+
+.. automodule:: meegpype.interfaces.mne.coreg
+   :members:
+   :show-inheritance:
+   :undoc-members:

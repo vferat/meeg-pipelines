@@ -1,0 +1,29 @@
+digraph structs {
+node [shape=record];
+maxwell_workflowinputnode [label="{IN}|{ inputnode | utility |  }|{OUT|<outcalibrations> calibrations|<outcrosstalks> crosstalks|<outemptyrooms> emptyrooms|<outraws> raws}"];
+maxwell_workflowcompute_head_pos [label="{IN|<incalibration> calibration|<incrosstalk> crosstalk|<inemptyroom> emptyroom|<inraw> raw}|{ compute_head_pos | mne |  }|{OUT|<outcalibration> calibration|<outcrosstalk> crosstalk|<outemptyroom> emptyroom|<outheadpositions> head_positions|<outraw> raw}"];
+maxwell_workflowcompute_destination [label="{IN|<inheadpositions> head_positions|<ininfiles> in_files}|{ compute_destination | mne |  }|{OUT|<outdestination> destination|<outinfo> info}"];
+maxwell_workflowfilter_chpi [label="{IN|<inraw> raw}|{ filter_chpi | mne |  }|{OUT|<outraw> raw}"];
+maxwell_workflowcompute_maxwell [label="{IN|<incalibration> calibration|<incrosstalk> crosstalk|<indestination> destination|<inemptyroom> emptyroom|<inheadpositions> head_positions|<inraw> raw}|{ compute_maxwell | mne |  }|{OUT|<outemptyroomtsss> emptyroom_tsss|<outemptyroomtssssplits> emptyroom_tsss_splits|<outrawtsss> raw_tsss|<outrawtssssplits> raw_tsss_splits}"];
+maxwell_workflowoutputnode [label="{IN|<indestination> destination|<inemptyroomtsss> emptyroom_tsss|<inemptyroomtssssplits> emptyroom_tsss_splits|<inheadpositions> head_positions|<ininfo> info|<inrawtsss> raw_tsss|<inrawtssssplits> raw_tsss_splits}|{ outputnode | utility |  }|{OUT}"];
+maxwell_workflowcompute_destination:outdestination:e -> maxwell_workflowcompute_maxwell:indestination:w;
+maxwell_workflowcompute_destination:outdestination:e -> maxwell_workflowoutputnode:indestination:w;
+maxwell_workflowcompute_destination:outinfo:e -> maxwell_workflowoutputnode:ininfo:w;
+maxwell_workflowcompute_head_pos:outcalibration:e -> maxwell_workflowcompute_maxwell:incalibration:w;
+maxwell_workflowcompute_head_pos:outcrosstalk:e -> maxwell_workflowcompute_maxwell:incrosstalk:w;
+maxwell_workflowcompute_head_pos:outemptyroom:e -> maxwell_workflowcompute_maxwell:inemptyroom:w;
+maxwell_workflowcompute_head_pos:outheadpositions:e -> maxwell_workflowcompute_destination:inheadpositions:w;
+maxwell_workflowcompute_head_pos:outheadpositions:e -> maxwell_workflowcompute_maxwell:inheadpositions:w;
+maxwell_workflowcompute_head_pos:outheadpositions:e -> maxwell_workflowoutputnode:inheadpositions:w;
+maxwell_workflowcompute_head_pos:outraw:e -> maxwell_workflowcompute_destination:ininfiles:w;
+maxwell_workflowcompute_head_pos:outraw:e -> maxwell_workflowfilter_chpi:inraw:w;
+maxwell_workflowcompute_maxwell:outemptyroomtsss:e -> maxwell_workflowoutputnode:inemptyroomtsss:w;
+maxwell_workflowcompute_maxwell:outemptyroomtssssplits:e -> maxwell_workflowoutputnode:inemptyroomtssssplits:w;
+maxwell_workflowcompute_maxwell:outrawtsss:e -> maxwell_workflowoutputnode:inrawtsss:w;
+maxwell_workflowcompute_maxwell:outrawtssssplits:e -> maxwell_workflowoutputnode:inrawtssssplits:w;
+maxwell_workflowfilter_chpi:outraw:e -> maxwell_workflowcompute_maxwell:inraw:w;
+maxwell_workflowinputnode:outcalibrations:e -> maxwell_workflowcompute_head_pos:incalibration:w;
+maxwell_workflowinputnode:outcrosstalks:e -> maxwell_workflowcompute_head_pos:incrosstalk:w;
+maxwell_workflowinputnode:outemptyrooms:e -> maxwell_workflowcompute_head_pos:inemptyroom:w;
+maxwell_workflowinputnode:outraws:e -> maxwell_workflowcompute_head_pos:inraw:w;
+}
