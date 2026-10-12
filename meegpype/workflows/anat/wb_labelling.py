@@ -95,6 +95,32 @@ def _generate_annot_filename(atlas, hemi, subject):
 
 
 def generate_wb_labelling_workflow(name="wb_labelling", base_dir=None):
+    """Build the Connectome Workbench based labelling workflow.
+
+    Workflow Graph
+        .. workflow::
+            :graph2use: orig
+            :simple_form: yes
+
+            from meegpype.workflows.anat.wb_labelling import generate_wb_labelling_workflow
+            wf = generate_wb_labelling_workflow()
+
+    Parameters
+    ----------
+    name : str
+        Name of the workflow.
+    base_dir : str, optional
+        Working directory of the workflow.
+
+    Inputs
+    ------
+    atlas
+        Atlas name.
+    subject
+        FreeSurfer subject identifier.
+    subjects_dir
+        FreeSurfer subjects directory.
+    """
     # Initiation of a workflow
     wf = Workflow(name=name, base_dir=base_dir)
 

@@ -130,3 +130,6 @@ dmypy.json
 license.txt
 *.sif
 /validation
+
+# sphinx-apidoc output
+doc/api/meegpype.*.rst

@@ -1,3 +1,10 @@
+"""Interfaces to `MNE-Python <https://mne.tools/>`__.
+
+MNE-Python is a Python package for the analysis of MEG and EEG data. It is used here
+for preprocessing (Maxwell filtering, head position), BEM and source space setup,
+forward modelling and reporting.
+"""
+
 from .preprocessing import (
     ComputeHeadPos,
     ApplyMaxwellFilter,

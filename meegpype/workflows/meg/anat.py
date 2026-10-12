@@ -35,6 +35,29 @@ def init_meg_anat_wf(
     volume_src=True,
     bem_method="basic",
     work_dir=None):
+    """Build the MEG anatomical workflow (BEM, source spaces, head surface).
+
+    Workflow Graph
+        .. workflow::
+            :graph2use: orig
+            :simple_form: yes
+
+            from meegpype.workflows.meg.anat import init_meg_anat_wf
+            wf = init_meg_anat_wf()
+
+    Parameters
+    ----------
+    name : str
+        Name of the workflow.
+    surface_src : bool
+        Whether to set up a surface source space.
+    volume_src : bool
+        Whether to set up a volume source space.
+    bem_method : str
+        Method used to compute the BEM surfaces.
+    work_dir : str, optional
+        Working directory of the workflow.
+    """
     # Initiate workflow
     wf = Workflow(name=name, base_dir=work_dir)
 

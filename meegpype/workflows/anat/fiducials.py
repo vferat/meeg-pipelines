@@ -6,6 +6,34 @@ from meegpype.interfaces.mne import ApplyTransform
 
 
 def init_fiducials_wf(name="fiducials", work_dir=None):
+    """Transfer fiducials to FreeSurfer native space.
+
+    Workflow Graph
+        .. workflow::
+            :graph2use: orig
+            :simple_form: yes
+
+            from meegpype.workflows.anat.fiducials import init_fiducials_wf
+            wf = init_fiducials_wf()
+
+    Parameters
+    ----------
+    name : str
+        Name of the workflow.
+    work_dir : str, optional
+        Working directory of the workflow.
+
+    Inputs
+    ------
+    fiducials
+        Fiducials file in the reference image space.
+    reference
+        Reference image the fiducials are defined on.
+    subject_id
+        FreeSurfer subject identifier.
+    subjects_dir
+        FreeSurfer subjects directory.
+    """
     # Initiate workflow
     wf = Workflow(name=name, base_dir=work_dir)
 

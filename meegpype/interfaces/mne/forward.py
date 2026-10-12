@@ -20,7 +20,7 @@ class MakeForwardSolutionInputSpec(BaseInterfaceInputSpec):
     trans = traits.Union(
         traits.File(exists=True),
         traits.Enum("fsaverage", None),
-        desc="The path to the head<->MRI transform *-trans.fif file produced during coregistration. Can also be 'fsaverage' to use the built-in fsaverage transformation. If trans is None, an identity matrix is assumed.",
+        desc="The path to the head<->MRI transform ``*-trans.fif`` file produced during coregistration. Can also be 'fsaverage' to use the built-in fsaverage transformation. If trans is None, an identity matrix is assumed.",
         mandatory=True,
     )
     src = traits.File(

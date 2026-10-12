@@ -49,13 +49,38 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.linkcode",
     "sphinx.ext.mathjax",
-    "numpydoc",
+    "nipype.sphinxext.apidoc",
+    "nipype.sphinxext.documenter",
     "sphinxcontrib.bibtex",
     "sphinx_copybutton",
     "sphinx_design",
     "sphinx_gallery.gen_gallery",
     "sphinx_issues",
+    "myst_parser",
+    "sphinxarg.ext",
+    "sphinxcontrib.apidoc",
+    "nipype.sphinxext.plot_workflow",
 ]
+
+# -- apidoc (one page per module, like niworkflows) ------------------------------------
+apidoc_module_dir = "../meegpype"
+apidoc_output_dir = "api"
+apidoc_excluded_paths = [
+    "commands",
+    "data",
+    "utils",
+    "conftest.py",
+    "_version.py",
+    "**/tests",
+]
+apidoc_template_dir = "_templates/apidoc"
+apidoc_separate_modules = True
+apidoc_module_first = True
+apidoc_extra_args = ["-d 1", "-T"]
+
+# -- nipype workflow graphs ------------------------------------------------------------
+plot_formats = [("png", 100)]
+wf_graph_options = {"graph2use": "orig", "simple_form": True}
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "**.ipynb_checkpoints"]
@@ -63,6 +88,11 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "**.ipynb_checkpoints"]
 # Sphinx will warn about all references where the target cannot be found.
 nitpicky = True
 nitpick_ignore = []
+# Nipype internals that are not in its inventory.
+nitpick_ignore_regex = [
+    (r"py:.*", r"nipype\.interfaces\..*"),
+    ("py:obj", "command"),
+]
 
 # A list of ignored prefixes for module index sorting.
 modindex_common_prefix = [f"{package}."]
@@ -73,7 +103,7 @@ modindex_common_prefix = [f"{package}."]
 default_role = "py:obj"
 
 # list of warning types to suppress
-suppress_warnings = ["config.cache"]
+suppress_warnings = ["config.cache", "app.add_directive"]
 
 # -- options for HTML output -----------------------------------------------------------
 html_css_files = [
@@ -84,6 +114,10 @@ html_show_sphinx = False
 html_static_path = ["_static"]
 html_theme = "furo"
 html_title = project
+
+# Documentation to change footer icons:
+# https://pradyunsg.me/furo/customisation/footer/#changing-footer-icons
+version_match = "dev" if "dev" in release else release
 
 # Documentation to change footer icons:
 # https://pradyunsg.me/furo/customisation/footer/#changing-footer-icons
@@ -113,8 +147,9 @@ autoclass_content = "class"
 
 # -- intersphinx -----------------------------------------------------------------------
 intersphinx_mapping = get_intersphinx_mapping(
-    packages={"matplotlib", "mne", "numpy", "pandas", "python", "scipy", "sklearn"}
+    packages={"matplotlib", "mne", "numpy", "pandas", "python", "scipy"}
 )
+intersphinx_mapping["nipype"] = ("https://nipype.readthedocs.io/en/latest/", None)
 intersphinx_timeout = 5
 
 # -- sphinx-issues ---------------------------------------------------------------------
@@ -123,55 +158,18 @@ issues_github_path = gh_url.split("https://github.com/")[-1]
 # -- autosectionlabels -----------------------------------------------------------------
 autosectionlabel_prefix_document = True
 
-# -- numpydoc --------------------------------------------------------------------------
-numpydoc_class_members_toctree = False
-numpydoc_attributes_as_param_list = False
-
-# x-ref
-numpydoc_xref_param_type = True
-numpydoc_xref_aliases = {
-    # Matplotlib
-    "Axes": "matplotlib.axes.Axes",
-    "Figure": "matplotlib.figure.Figure",
-    # MNE
-    "DigMontage": "mne.channels.DigMontage",
-    "Epochs": "mne.Epochs",
-    "Evoked": "mne.Evoked",
-    "Info": "mne.Info",
-    "Projection": "mne.Projection",
-    "Raw": "mne.io.Raw",
-    # Python
-    "bool": ":class:`python:bool`",
-    "Path": "pathlib.Path",
-    "TextIO": "io.TextIOBase",
-}
-numpydoc_xref_ignore = {
-    "of",
-    "shape",
-}
-
-# validation
-# https://numpydoc.readthedocs.io/en/latest/validation.html#validation-checks
-error_ignores = {
-    "GL01",  # docstring should start in the line immediately after the quotes
-    "EX01",  # section 'Examples' not found
-    "ES01",  # no extended summary found
-    "SA01",  # section 'See Also' not found
-    "RT02",  # The first line of the Returns section should contain only the type, unless multiple values are being returned  # noqa: E501
-}
-numpydoc_validate = True
-numpydoc_validation_checks = {"all"} | set(error_ignores)
-numpydoc_validation_exclude = {  # regex to ignore during docstring check
-    r"\.__getitem__",
-    r"\.__contains__",
-    r"\.__hash__",
-    r"\.__mul__",
-    r"\.__sub__",
-    r"\.__add__",
-    r"\.__iter__",
-    r"\.__div__",
-    r"\.__neg__",
-}
+# -- napoleon --------------------------------------------------------------------------
+napoleon_google_docstring = False
+napoleon_numpy_docstring = True
+napoleon_use_param = False
+# Render nipype-style sections like numpy "Parameters".
+napoleon_custom_sections = [
+    ("Inputs", "Parameters"),
+    ("Outputs", "Parameters"),
+    ("Attributes", "Parameters"),
+    ("Mandatory Inputs", "Parameters"),
+    ("Optional Inputs", "Parameters"),
+]
 
 # -- sphinxcontrib-bibtex --------------------------------------------------------------
 bibtex_bibfiles = ["./references.bib"]
