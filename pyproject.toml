@@ -58,10 +58,10 @@ build = [
   'twine',
 ]
 doc = [
-  'furo',
   'intersphinx_registry',
   'memory-profiler',
   'numpydoc',
+  'pydata-sphinx-theme',
   'sphinx',
   'sphinx-copybutton',
   'sphinx-design',
