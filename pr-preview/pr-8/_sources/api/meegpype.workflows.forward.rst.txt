@@ -1,0 +1,7 @@
+meegpype.workflows.forward module
+=================================
+
+.. automodule:: meegpype.workflows.forward
+   :members:
+   :show-inheritance:
+   :undoc-members:

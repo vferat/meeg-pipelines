@@ -1,0 +1,33 @@
+strict digraph {
+"inputnode (utility)";
+"setup_surface_source_space (mne)";
+"setup_volume_source_space (mne)";
+"generate_filenames (utility)";
+"watershed_bem_workflow";
+"setup_forward_model (mne)";
+"make_head_surface (mne)";
+"merge_sources (utility)";
+"combine_source_spaces (mne)";
+"outputnode (utility)";
+"inputnode (utility)" -> "setup_surface_source_space (mne)";
+"inputnode (utility)" -> "setup_volume_source_space (mne)";
+"inputnode (utility)" -> "generate_filenames (utility)";
+"inputnode (utility)" -> "watershed_bem_workflow";
+"inputnode (utility)" -> "setup_forward_model (mne)";
+"inputnode (utility)" -> "make_head_surface (mne)";
+"setup_surface_source_space (mne)" -> "merge_sources (utility)";
+"setup_volume_source_space (mne)" -> "merge_sources (utility)";
+"generate_filenames (utility)" -> "setup_surface_source_space (mne)";
+"generate_filenames (utility)" -> "setup_volume_source_space (mne)";
+"generate_filenames (utility)" -> "combine_source_spaces (mne)";
+"generate_filenames (utility)" -> "setup_forward_model (mne)";
+"watershed_bem_workflow" -> "setup_surface_source_space (mne)";
+"watershed_bem_workflow" -> "setup_volume_source_space (mne)";
+"watershed_bem_workflow" -> "setup_forward_model (mne)";
+"watershed_bem_workflow" -> "make_head_surface (mne)";
+"setup_forward_model (mne)" -> "setup_volume_source_space (mne)";
+"setup_forward_model (mne)" -> "outputnode (utility)";
+"make_head_surface (mne)" -> "outputnode (utility)";
+"merge_sources (utility)" -> "combine_source_spaces (mne)";
+"combine_source_spaces (mne)" -> "outputnode (utility)";
+}

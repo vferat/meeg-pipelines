@@ -1,0 +1,12 @@
+[
+    {
+        "name": "latest",
+        "version": "latest",
+        "url": "https://vferat.github.io/meeg-pipelines/latest/"
+    },
+    {
+        "name": "dev",
+        "version": "dev",
+        "url": "https://vferat.github.io/meeg-pipelines/dev/"
+    }
+]

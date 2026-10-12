@@ -1,0 +1,7 @@
+meegpype.pipelines.forward module
+=================================
+
+.. automodule:: meegpype.pipelines.forward
+   :members:
+   :show-inheritance:
+   :undoc-members:
