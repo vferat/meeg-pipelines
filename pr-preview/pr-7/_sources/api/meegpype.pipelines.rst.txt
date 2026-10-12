@@ -1,0 +1,17 @@
+meegpype.pipelines package
+==========================
+
+.. automodule:: meegpype.pipelines
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   meegpype.pipelines.forward
+   meegpype.pipelines.fs_labelling
+   meegpype.pipelines.fslr
