@@ -49,7 +49,7 @@ jobs:
       - name: Install meegpype
         run: uv pip install --quiet --system .[doc]
       - name: Install meegpype-wrapper
-        run: uv pip install ./wrapper
+        run: uv pip install ./wrapper --quiet --system
       - name: Download data
         run: |
           for attempt in 1 2 3; do
