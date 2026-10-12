@@ -1,0 +1,9 @@
+﻿meegpype.set\_log\_level
+========================
+
+.. currentmodule:: meegpype
+
+.. autofunction:: set_log_level
+
+.. minigallery:: meegpype.set_log_level
+    :add-heading:
