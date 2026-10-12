@@ -1,6 +1,6 @@
 :orphan:
 
-meegpzpe tutorials
+meegpype tutorials
 ===================
 
 tutorials...
