@@ -1,7 +1,0 @@
-meegpype.interfaces.freesurfer.mri\_mc module
-=============================================
-
-.. automodule:: meegpype.interfaces.freesurfer.mri_mc
-   :members:
-   :show-inheritance:
-   :undoc-members:

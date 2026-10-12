@@ -1,7 +1,0 @@
-meegpype.interfaces.mne.preprocessing.filter\_chpi module
-=========================================================
-
-.. automodule:: meegpype.interfaces.mne.preprocessing.filter_chpi
-   :members:
-   :show-inheritance:
-   :undoc-members:

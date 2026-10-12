@@ -1,7 +1,0 @@
-meegpype.interfaces.mne.preprocessing.destination module
-========================================================
-
-.. automodule:: meegpype.interfaces.mne.preprocessing.destination
-   :members:
-   :show-inheritance:
-   :undoc-members:
