@@ -6,6 +6,28 @@ from meegpype.interfaces.mne import ComputeHeadPos
 
 
 def init_maxwell_wf(name="maxwell_workflow", base_dir=None):
+    """Build the Maxwell filtering workflow.
+
+    Workflow Graph
+        .. workflow::
+            :graph2use: orig
+            :simple_form: yes
+
+            from meegpype.workflows.meg.maxwell import init_maxwell_wf
+            wf = init_maxwell_wf()
+
+    Parameters
+    ----------
+    name : str
+        Name of the workflow.
+    base_dir : str, optional
+        Working directory of the workflow.
+
+    Inputs
+    ------
+    raws, emptyrooms, crosstalks, calibrations
+        Lists of files, one entry per run.
+    """
 
     wf = Workflow(name=name, base_dir=base_dir)
 

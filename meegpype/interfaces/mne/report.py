@@ -23,7 +23,7 @@ class MakeReportInputSpec(BaseInterfaceInputSpec):
     raws = traits.List(traits.File(exist=True), desc="List of raw files")
     head_positions = traits.List(traits.File(exist=True), desc="List of head position figures")
     trans = traits.File(
-        desc="The path to the head<->MRI transform *-trans.fif file produced during coregistration.",
+        desc="The path to the head<->MRI transform ``*-trans.fif`` file produced during coregistration.",
         exists=True,
         mandatory=False,
     )
