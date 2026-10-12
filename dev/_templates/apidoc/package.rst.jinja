@@ -13,6 +13,10 @@
 {%- endfor %}
 {%- endmacro %}
 
+{%- if pkgname == "meegpype" %}
+:orphan:
+
+{% endif %}
 {%- set software = {
     "meegpype.interfaces.freesurfer": "FreeSurfer",
     "meegpype.interfaces.mne": "MNE-Python",

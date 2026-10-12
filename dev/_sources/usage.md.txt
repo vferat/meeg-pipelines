@@ -2,8 +2,7 @@
 
 ## wrapper
 
-`meegpype-wrapper` runs the meegpype pipelines inside the Docker image (or with
-Apptainer when `--apptainer` is given).
+`meegpype-wrapper` runs the meegpype pipelines inside the Docker / Apptainer image.
 
 ### forward
 
