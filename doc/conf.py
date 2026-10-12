@@ -29,6 +29,7 @@ copyright = f"{date.today().year}, {author}"
 release = meegpype.__version__
 package = meegpype.__name__
 gh_url = "https://github.com/vferat/meeg-pipelines"
+gh_pages_url = "https://vferat.github.io/meeg-pipelines/"
 
 # -- general configuration -------------------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -112,16 +113,19 @@ html_css_files = [
 html_permalinks_icon = "🔗"
 html_show_sphinx = False
 html_static_path = ["_static"]
-html_theme = "furo"
+html_theme = "pydata_sphinx_theme"
 html_title = project
 
-# Documentation to change footer icons:
-# https://pradyunsg.me/furo/customisation/footer/#changing-footer-icons
 version_match = "dev" if "dev" in release else release
 
 # Documentation to change footer icons:
 # https://pradyunsg.me/furo/customisation/footer/#changing-footer-icons
 html_theme_options = {
+    "switcher": {
+    "json_url": f"{gh_pages_url}dev/_static/switcher.json",
+    "version_match": version_match,
+    },
+    "navbar_end": ["theme-switcher", "version-switcher"],
     "footer_icons": [
         {
             "name": "GitHub",
