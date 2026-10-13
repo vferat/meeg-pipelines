@@ -88,11 +88,11 @@ def generate_bem_workflow(
         decimate_surface.inputs.output_surface = 'brain_mc_decimated.surf'
 
         mris_expand_brain = Node(MRIsExpand(), name='mris_expand_brain')
-        mris_expand_brain.inputs.distance = 4
+        mris_expand_brain.inputs.distance = 1
         mris_expand_brain.inputs.out_name = 'brain.surf'
 
         mris_expand_inner_skull = Node(MRIsExpand(), name='mris_expand_inner_skull')
-        mris_expand_inner_skull.inputs.distance = 6
+        mris_expand_inner_skull.inputs.distance = 3
         mris_expand_inner_skull.inputs.out_name = 'inner_skull.surf'
         mris_expand_inner_skull.inputs.smooth_averages = 10
 
