@@ -1,0 +1,7 @@
+meegpype.workflows.meg.anat module
+==================================
+
+.. automodule:: meegpype.workflows.meg.anat
+   :members:
+   :show-inheritance:
+   :undoc-members:

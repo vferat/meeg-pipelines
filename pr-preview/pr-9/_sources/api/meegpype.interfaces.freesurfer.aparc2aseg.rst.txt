@@ -1,0 +1,7 @@
+meegpype.interfaces.freesurfer.aparc2aseg module
+================================================
+
+.. automodule:: meegpype.interfaces.freesurfer.aparc2aseg
+   :members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,17 @@
+meegpype.interfaces package
+===========================
+
+.. automodule:: meegpype.interfaces
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 1
+
+   meegpype.interfaces.connectome_wb
+   meegpype.interfaces.freesurfer
+   meegpype.interfaces.mne

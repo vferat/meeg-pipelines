@@ -1,0 +1,7 @@
+meegpype.interfaces.freesurfer.mris\_smooth module
+==================================================
+
+.. automodule:: meegpype.interfaces.freesurfer.mris_smooth
+   :members:
+   :show-inheritance:
+   :undoc-members:

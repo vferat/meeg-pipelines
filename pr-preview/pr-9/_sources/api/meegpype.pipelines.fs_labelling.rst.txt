@@ -1,0 +1,7 @@
+meegpype.pipelines.fs\_labelling module
+=======================================
+
+.. automodule:: meegpype.pipelines.fs_labelling
+   :members:
+   :show-inheritance:
+   :undoc-members:
