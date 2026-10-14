@@ -511,6 +511,10 @@
 <li><p><strong>outer_skull</strong> (<em>a string or os.PathLike object referring to an existing file</em>)</p></li>
 <li><p><strong>subject</strong> (<em>a string</em>) – Subject name.</p></li>
 <li><p><strong>subjects_dir</strong> (<em>a pathlike object or string representing a directory</em>) – Subjects directory.</p></li>
+<li><p><strong>watershed_brain_surf</strong> (<em>a string or os.PathLike object referring to an existing file</em>) – Original watershed brain surface.</p></li>
+<li><p><strong>watershed_inner_skull</strong> (<em>a string or os.PathLike object referring to an existing file</em>) – Original watershed inner skull surface.</p></li>
+<li><p><strong>watershed_outer_skin</strong> (<em>a string or os.PathLike object referring to an existing file</em>) – Original watershed outer skin surface.</p></li>
+<li><p><strong>watershed_outer_skull</strong> (<em>a string or os.PathLike object referring to an existing file</em>) – Original watershed outer skull surface.</p></li>
 </ul>
 </dd>
 </dl>
@@ -524,14 +528,16 @@
 <dt class="field-odd">Mandatory Inputs<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>fname</strong> (<em>a string or os.PathLike object</em>) – Output base name. Will be prepend by -bem.fif and -sol.fif.</p></li>
+<li><p><strong>inner_skull</strong> (<em>a pathlike object or string representing an existing file</em>) – Inner skull surface (FreeSurfer format).</p></li>
 <li><p><strong>subject</strong> (<em>a string</em>) – Subject name (required).</p></li>
-<li><p><strong>subjects_dir</strong> (<em>a pathlike object or string representing an existing directory</em>) – Subjects directory.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Optional Inputs<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>conductivity</strong> (<em>an array</em>) – Defines the brain compartment conductivity. The default value is 0.3 S/m.</p></li>
 <li><p><strong>ico</strong> (<em>an integer</em>) – The surface ico downsampling to use, e.g. 5=20484, 4=5120, 3=1280. If None, no subsampling is applied.</p></li>
+<li><p><strong>outer_skin</strong> (<em>a pathlike object or string representing an existing file</em>) – Outer skin surface (FreeSurfer format). Required for a 3-layer model.</p></li>
+<li><p><strong>outer_skull</strong> (<em>a pathlike object or string representing an existing file</em>) – Outer skull surface (FreeSurfer format). Required for a 3-layer model.</p></li>
 <li><p><strong>overwrite</strong> (<em>a boolean</em>) – Overwrite existing files.</p></li>
 <li><p><strong>verbose</strong> (<em>a boolean</em>) – Enable verbose mode (printing of log messages).</p></li>
 </ul>
