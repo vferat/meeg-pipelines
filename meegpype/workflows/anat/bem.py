@@ -14,6 +14,47 @@ from ...interfaces.mne.decimate_surface import DecimateSurface
 from ...interfaces.mne.bem import MakeWatershedBEM
 
 
+def install_bem_surfaces(subjects_dir, subject, brain, inner_skull, outer_skull, outer_skin):
+    """Install the BEM surfaces in subjects_dir/subject/bem.
+
+    Existing files are only replaced when their content differs, so that unchanged
+    surfaces keep their timestamps (and nipype caches).
+    """
+    import os
+    import filecmp
+    import shutil
+
+    bem_dir = os.path.join(subjects_dir, subject, "bem")
+    sources = {
+        "brain": brain,
+        "inner_skull": inner_skull,
+        "outer_skull": outer_skull,
+        "outer_skin": outer_skin,
+    }
+    installed = {}
+    for name, source in sources.items():
+        destination = os.path.join(bem_dir, f"{name}.surf")
+        # Never write through a symlink: it would modify the file it points to.
+        if (
+            os.path.islink(destination)
+            or not os.path.exists(destination)
+            or not filecmp.cmp(source, destination, shallow=False)
+        ):
+            if os.path.lexists(destination):
+                os.remove(destination)
+            shutil.copyfile(source, destination)
+        installed[name] = destination
+
+    return (
+        subject,
+        subjects_dir,
+        installed["brain"],
+        installed["inner_skull"],
+        installed["outer_skull"],
+        installed["outer_skin"],
+    )
+
+
 def generate_bem_workflow(
         subject_id=None,
         subjects_dir=None,
@@ -33,9 +74,28 @@ def generate_bem_workflow(
     inputnode.inputs.subjects_dir = subjects_dir
 
     outputnode = Node(
-        interface=IdentityInterface(fields=["subject_id", "subjects_dir", "brain_surf", 'inner_skull_surf']), name="outputnode"
+        interface=IdentityInterface(fields=["subject_id", "subjects_dir", "brain_surf", "inner_skull_surf", "outer_skull_surf", "outer_skin_surf"]), name="outputnode"
     )
-    
+
+    # The bem folder is shared between methods and modified by previous runs, so the
+    # surfaces of the current method are reinstalled on every run (even when cached).
+    install_surfaces = Node(
+        Function(
+            input_names=['subjects_dir', 'subject', 'brain', 'inner_skull', 'outer_skull', 'outer_skin'],
+            output_names=['subject', 'subjects_dir', 'brain_surf', 'inner_skull_surf', 'outer_skull_surf', 'outer_skin_surf'],
+            function=install_bem_surfaces,
+        ),
+        name='install_surfaces',
+        overwrite=True,
+    )
+
+    wf.connect(install_surfaces, 'subject', outputnode, 'subject_id')
+    wf.connect(install_surfaces, 'subjects_dir', outputnode, 'subjects_dir')
+    wf.connect(install_surfaces, 'brain_surf', outputnode, 'brain_surf')
+    wf.connect(install_surfaces, 'inner_skull_surf', outputnode, 'inner_skull_surf')
+    wf.connect(install_surfaces, 'outer_skull_surf', outputnode, 'outer_skull_surf')
+    wf.connect(install_surfaces, 'outer_skin_surf', outputnode, 'outer_skin_surf')
+
     if method == "basic":
         watershed = Node(MakeWatershedBEM(), name='watershed')
         watershed.inputs.overwrite = True
@@ -43,14 +103,17 @@ def generate_bem_workflow(
         wf.connect(inputnode, 'subject_id', watershed, 'subject')
         wf.connect(inputnode, 'subjects_dir', watershed, 'subjects_dir')
 
-        wf.connect(watershed, 'subject', outputnode, 'subject_id')
-        wf.connect(watershed, 'subjects_dir', outputnode, 'subjects_dir')
-        wf.connect(watershed, 'brain_surf', outputnode, 'brain_surf')
-        wf.connect(watershed, 'inner_skull', outputnode, 'inner_skull_surf')
+        # All surfaces from watershed
+        wf.connect(watershed, 'subject', install_surfaces, 'subject')
+        wf.connect(watershed, 'subjects_dir', install_surfaces, 'subjects_dir')
+        wf.connect(watershed, 'watershed_brain_surf', install_surfaces, 'brain')
+        wf.connect(watershed, 'watershed_inner_skull', install_surfaces, 'inner_skull')
+        wf.connect(watershed, 'watershed_outer_skull', install_surfaces, 'outer_skull')
+        wf.connect(watershed, 'watershed_outer_skin', install_surfaces, 'outer_skin')
 
     elif method == "refined":
         fs_source = Node(FreeSurferSource(), name='fs_source')
-        fs_source.hemi = 'both'
+        fs_source.inputs.hemi = 'both'
 
         convert_aseg = Node(MRIConvert(), name='convert_aseg')
         convert_aseg.inputs.out_type = 'niigz'
@@ -80,8 +143,6 @@ def generate_bem_workflow(
         mris_smooth.inputs.average = 100
         mris_smooth.inputs.n_iteration = 100
 
-        sync_outputs = Node(IdentityInterface(fields=['watershed_input', 'output_surface']), name='sync_outputs')
-
         decimate_surface = Node(DecimateSurface(), name='decimate_surface')
         decimate_surface.inputs.n_triangles = 5120
         decimate_surface.inputs.method = 'sphere'
@@ -105,8 +166,6 @@ def generate_bem_workflow(
             name='generate_bem_path',
         )
 
-        datasink_brain_surf = Node(DataSink(), name='datasink_brain_surf')
-        datasink_inner_skull_surf = Node(DataSink(), name='datasink_inner_skull_surf')
         datasink_brain_vol = Node(DataSink(), name='datasink_brain_vol')
 
         ## Connections
@@ -127,9 +186,6 @@ def generate_bem_workflow(
         wf.connect(inputnode, 'subjects_dir', generate_bem_path, 'subjects_dir')
         wf.connect(inputnode, 'subject_id', generate_bem_path, 'subject_id')
 
-        wf.connect(generate_bem_path, 'subject_dir', datasink_brain_surf, 'base_directory')
-        wf.connect(generate_bem_path, 'subject_dir', datasink_inner_skull_surf, 'base_directory')
-
         wf.connect(refine_brain_mask, 'out_file', mri_binarize, 'input_volume')
 
         wf.connect(mri_binarize, 'output_volume', mri_mc, 'input_volume')
@@ -137,23 +193,19 @@ def generate_bem_workflow(
 
         wf.connect(mris_smooth, 'output_surface', decimate_surface, 'input_surface')
 
-        # Sync mri_expand_brain with watershed to ensure that mri_expand_brain overwrites the watershed output surfaces
-        wf.connect(watershed, 'subject', sync_outputs, 'watershed_input')
-        wf.connect(decimate_surface, 'output_surface', sync_outputs, 'output_surface')
-
-        wf.connect(sync_outputs, 'output_surface', mris_expand_brain, 'in_file')
+        wf.connect(decimate_surface, 'output_surface', mris_expand_brain, 'in_file')
         wf.connect(mris_expand_brain, 'out_file', mris_expand_inner_skull, 'in_file')
-
-        wf.connect(mris_expand_brain, 'out_file', datasink_brain_surf, 'bem.@brain_surf')
-        wf.connect(mris_expand_inner_skull, 'out_file', datasink_inner_skull_surf, 'bem.@inner_skull_surf')
 
         wf.connect(refine_brain_mask, 'out_file', datasink_brain_vol, 'bem.@brain_vol')
         wf.connect(generate_bem_path, 'subject_dir', datasink_brain_vol, 'base_directory')
 
-        wf.connect(watershed, 'subject', outputnode, 'subject_id')
-        wf.connect(watershed, 'subjects_dir', outputnode, 'subjects_dir')
-        wf.connect(datasink_brain_surf, 'out_file', outputnode, 'brain_surf')
-        wf.connect(datasink_inner_skull_surf, 'out_file', outputnode, 'inner_skull_surf')
+        # Refined brain and inner skull, outer skull and skin from watershed
+        wf.connect(watershed, 'subject', install_surfaces, 'subject')
+        wf.connect(watershed, 'subjects_dir', install_surfaces, 'subjects_dir')
+        wf.connect(mris_expand_brain, 'out_file', install_surfaces, 'brain')
+        wf.connect(mris_expand_inner_skull, 'out_file', install_surfaces, 'inner_skull')
+        wf.connect(watershed, 'watershed_outer_skull', install_surfaces, 'outer_skull')
+        wf.connect(watershed, 'watershed_outer_skin', install_surfaces, 'outer_skin')
 
     else:
         raise ValueError(f"Unknown method: {method}")
