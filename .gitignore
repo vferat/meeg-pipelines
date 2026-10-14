@@ -133,3 +133,8 @@ license.txt
 
 # sphinx-apidoc output
 doc/api/meegpype.*.rst
+.pixi/
+
+# setuptools-scm
+meegpype/_version.py
+wrapper/meegpype_wrapper/_version.py

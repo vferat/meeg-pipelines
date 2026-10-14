@@ -1,6 +1,6 @@
 [build-system]
 build-backend = 'setuptools.build_meta'
-requires = ['setuptools >= 64.0.0']
+requires = ['setuptools >= 64.0.0', 'setuptools-scm>=8']
 
 [project]
 authors = [
@@ -26,9 +26,10 @@ dependencies = [
   'mne[full]==1.12.1',
   'mne-bids',
   'h5io',
-  'smriprep',
+  'smriprep==0.20.0',
 ]
 description = 'MEG and EEG pipelines.'
+dynamic = ['version']
 keywords = [
   'python',
   'meg',
@@ -42,7 +43,6 @@ maintainers = [
 name = 'meegpype'
 readme = 'README.md'
 requires-python = '>=3.9'
-version = '0.1.0'
 
 [project.optional-dependencies]
 all = [
@@ -51,7 +51,6 @@ all = [
   'meegpype[stubs]',
   'meegpype[style]',
   'meegpype[test]',
-  'meegpype[headless]',
 ]
 build = [
   'build',
@@ -144,6 +143,62 @@ multi_line_output = 3
 profile = 'black'
 py_version = 39
 
+[tool.pixi.activation.env]
+FSLDIR = '$CONDA_PREFIX'
+# Use the conda-forge Qt (PySide6) rather than the PyQt6 wheel pulled by mne[full],
+# so that Qt, VTK and their X11/OpenGL libraries all come from the pixi environment
+QT_API = 'pyside6'
+
+[tool.pixi.dependencies]
+# Keep in sync with sMRIPrep's [tool.pixi.dependencies]
+ants = '2.6.*'
+connectome-workbench-cli = {build = '*qt6*', version = '2.0.*'}
+fsl-bet2 = '2111.8.*'
+fsl-fast4 = '2111.3.*'
+fsl-flirt = '2111.4.*'
+fsl-miscmaths = '2412.4.*'
+graphviz = '12.2.*'
+h5py = '3.13.*'
+matplotlib = '3.10.*'
+mkl = '2024.2.2.*'
+mkl-service = '2.4.2.*'
+nodejs = '20.*'
+numpy = '2.2.*'
+pandas = '2.2.*'
+pandoc = '3.7.*'
+python = '3.12.*'
+scikit-image = '0.25.*'
+scikit-learn = '1.6.*'
+scipy = '1.15.*'
+# meegpype: 3D rendering stack (VTK/Qt/Mesa) from conda-forge for headless MNE under Xvfb
+ffmpeg = '*'
+libegl = '*'
+libgl = '*'
+mesalib = '*'
+pyside6 = '6.*'
+pyvista = '*'
+pyvistaqt = '*'
+vtk = '9.*'
+
+[tool.pixi.environments]
+default = {features = ['editable'], solve-group = 'default'}
+# Environment shipped in the Docker image
+meegpype = {features = ['editable'], solve-group = 'default'}
+test = {features = ['editable', 'test'], solve-group = 'default'}
+
+[tool.pixi.feature.editable.pypi-dependencies]
+meegpype = {editable = true, path = '.'}
+
+[tool.pixi.pypi-options.dependency-overrides]
+numpy = '>=2.2'
+
+[tool.pixi.workspace]
+channels = [
+  'https://fsl.fmrib.ox.ac.uk/fsldownloads/fslconda/public',
+  'conda-forge',
+]
+platforms = ['linux-64']
+
 [tool.pydocstyle]
 add_ignore = 'D100,D104,D107'
 convention = 'numpy'
@@ -184,6 +239,10 @@ include-package-data = false
 [tool.setuptools.packages.find]
 exclude = ['meegpype*tests']
 include = ['meegpype*']
+
+[tool.setuptools_scm]
+version_file = 'meegpype/_version.py'
+version_scheme = 'release-branch-semver'
 
 [tool.tomlsort]
 all = true

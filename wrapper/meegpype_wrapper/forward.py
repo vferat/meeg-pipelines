@@ -1,7 +1,7 @@
 import os
 import subprocess
 import tempfile
-from . import DOCKER_IMAGE
+from . import DOCKER_IMAGE, DOCKER_PULL
 
 def add_parser(subparsers) -> None:
     subparser = subparsers.add_parser("forward", help="Run forward pipeline")
@@ -79,7 +79,7 @@ def run(args, unknown_args) -> None:
     if engine == "apptainer":
         command = ['apptainer', 'exec', '--cleanenv', "--containall", "--writable-tmpfs"]
     else:
-        command = ['docker', 'run', '--rm', '--pull=always']
+        command = ['docker', 'run', '--rm', f'--pull={DOCKER_PULL}']
     main_args = []
 
     # bids_dir

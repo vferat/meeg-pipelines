@@ -1,0 +1,4 @@
+# Files used inside the Docker image must keep LF line endings
+Dockerfile text eol=lf
+docker/** text eol=lf
+pixi.lock merge=binary linguist-language=YAML linguist-generated=true -diff

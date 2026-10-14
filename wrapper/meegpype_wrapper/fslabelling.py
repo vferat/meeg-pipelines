@@ -2,7 +2,7 @@ import os
 import subprocess
 
 from ._checks import ensure_path, ensure_subject, ensure_int, check_type
-from . import DOCKER_IMAGE
+from . import DOCKER_IMAGE, DOCKER_PULL
 
 def add_parser(subparsers) -> None:
     subparser = subparsers.add_parser("fslabelling", help="Run freesurfer labelling pipeline")
@@ -47,7 +47,7 @@ def add_parser(subparsers) -> None:
 
 def run(args, unknown_args) -> None:
     """Run freesurfer labelling command."""
-    command = ['docker', 'run', '--rm']
+    command = ['docker', 'run', '--rm', f'--pull={DOCKER_PULL}']
 
     # subjects_dir
     subjects_dir = args.subjects_dir

@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-from . import DOCKER_IMAGE
+from . import DOCKER_IMAGE, DOCKER_PULL
 
 def add_parser(subparsers) -> None:
     subparser = subparsers.add_parser("fslr", help="Run fslr pipeline")
@@ -45,7 +45,7 @@ def add_parser(subparsers) -> None:
 
 def run(args, unknown_args) -> None:
     """Run fslr command."""
-    command = ['docker', 'run', '--rm']
+    command = ['docker', 'run', '--rm', f'--pull={DOCKER_PULL}']
 
     # subjects_dir
     subjects_dir = args.subjects_dir

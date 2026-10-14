@@ -1,5 +1,5 @@
 #!/bin/bash
-source /home/smriprep/.bashrc
+source "$HOME/.bashrc"
 
 export PATH="/opt/freesurfer/fsfast/bin:${PATH}"
 export LD_LIBRARY_PATH="/lib64${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
@@ -45,12 +45,16 @@ XVFB_PID=$!
 export DISPLAY=:99
 
 echo "Waiting for Xvfb..."
-until xdpyinfo -display :99 >/dev/null 2>&1; do
+until [ -S /tmp/.X11-unix/X99 ]; do
+    if ! kill -0 "$XVFB_PID" 2>/dev/null; then
+        echo "Xvfb failed to start:" >&2
+        cat /tmp/xvfb_err.log >&2
+        exit 1
+    fi
     sleep 0.2
 done
 
-echo "Xvfb started:"
-xdpyinfo -display :99 | head
+echo "Xvfb started on $DISPLAY"
 
 # ------------------------------------------------------------------
 # Run command

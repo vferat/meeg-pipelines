@@ -1,12 +1,20 @@
+# Only exclude files that are not tracked by git: .git is part of the context and
+# setuptools-scm reads meegpype's version from it. Excluding a tracked file makes the
+# working tree "dirty" inside the build, and the version gets a +dYYYYMMDD suffix.
+
+# untracked local files
 validation/
-wrapper/
-
-BACKUP/
-doc/
-
-AGENT.md
-DEVELOPMENT.md
-README.md
-
 license.txt
 junit-results.xml
+doc/_build/
+doc/generated/
+doc/api/generated/
+
+# local environments, caches and build outputs
+.pixi
+.venv
+**/.*_cache
+**/__pycache__
+**/*.egg-info
+**/build/
+**/dist/
