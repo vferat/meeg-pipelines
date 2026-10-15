@@ -281,7 +281,7 @@ def generate_refined_bem_workflow(
     mris_expand_brain.inputs.out_name = 'brain.surf'
 
     mris_expand_inner_skull = Node(MRIsExpand(), name='mris_expand_inner_skull')
-    mris_expand_inner_skull.inputs.distance = 5
+    mris_expand_inner_skull.inputs.distance = 6
     mris_expand_inner_skull.inputs.out_name = 'inner_skull.surf'
     mris_expand_inner_skull.inputs.smooth_averages = 5
 
