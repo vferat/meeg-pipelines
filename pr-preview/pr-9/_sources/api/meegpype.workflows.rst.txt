@@ -12,6 +12,7 @@ Subpackages
 .. toctree::
    :maxdepth: 1
 
+   meegpype.workflows.anat
    meegpype.workflows.meg
 
 Submodules
