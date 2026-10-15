@@ -4,7 +4,7 @@ from datetime import datetime
 from nipype import config, logging, Node
 from nipype.interfaces.io import DataSink
 
-from ..workflows.anat.fs_individual_atlas import generate_fs_labelling_workflow
+from ..workflows.anat.fs_individual_atlas import generate_fs_individual_labelling_workflow
 from ..data import get_data_folder
 from ..utils.logs import set_log_level
 from ..utils._checks import ensure_path, ensure_subject, ensure_int, check_value
@@ -36,7 +36,7 @@ def run_fslabelling_pipeline(atlas, subject, subjects_dir, output_dir, work_dir=
     else:
         n_procs = 1
 
-    wf = generate_fs_labelling_workflow(name='fslabelling_workflow', base_dir=work_dir)
+    wf = generate_fs_individual_labelling_workflow(name='fslabelling_workflow', base_dir=work_dir)
     wf.inputs.inputnode.atlas_name = atlas
     wf.inputs.inputnode.subject_id = subject
     wf.inputs.inputnode.subjects_dir = subjects_dir

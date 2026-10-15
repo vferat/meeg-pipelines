@@ -1,3 +1,12 @@
+"""BEM surface workflows.
+
+Both workflows write their surfaces to ``subjects_dir/subject_id/bem`` (``brain.surf``,
+``inner_skull.surf``, ``outer_skull.surf`` and ``outer_skin.surf``), the location MNE
+reads them from. Since this folder is shared between methods, the surfaces of the
+current workflow are reinstalled on every run, even when nodes are cached: the content
+of the ``bem`` folder always matches the workflow that ran last.
+"""
+
 import nipype.pipeline.engine as pe
 from nipype import Node
 
@@ -55,18 +64,8 @@ def install_bem_surfaces(subjects_dir, subject, brain, inner_skull, outer_skull,
     )
 
 
-def generate_bem_workflow(
-        subject_id=None,
-        subjects_dir=None,
-        name="freesurfer_bem_surfaces",
-        method="basic"):
-
-    # utils
-    def generate_subject_dir_path(subjects_dir, subject_id):
-        import os
-        return os.path.abspath(os.path.join(subjects_dir, subject_id))
-
-    # Initilaze workflow
+def _init_bem_workflow(name, subject_id, subjects_dir):
+    """Create the workflow, its input/output nodes and the surface installation node."""
     wf = pe.Workflow(name=name)
 
     inputnode = Node(IdentityInterface(fields=['subject_id', 'subjects_dir']), name='inputnode')
@@ -96,117 +95,234 @@ def generate_bem_workflow(
     wf.connect(install_surfaces, 'outer_skull_surf', outputnode, 'outer_skull_surf')
     wf.connect(install_surfaces, 'outer_skin_surf', outputnode, 'outer_skin_surf')
 
+    return wf, inputnode, install_surfaces
+
+
+def generate_basic_bem_workflow(
+        subject_id=None,
+        subjects_dir=None,
+        name="basic_bem_workflow"):
+    """Build the basic BEM workflow, using the watershed algorithm.
+
+    All BEM surfaces (brain, inner skull, outer skull and outer skin) are computed
+    with :func:`mne.bem.make_watershed_bem` and installed in
+    ``subjects_dir/subject_id/bem``.
+
+    Workflow Graph
+        .. workflow::
+            :graph2use: orig
+            :simple_form: yes
+
+            from meegpype.workflows.anat.bem import generate_basic_bem_workflow
+            wf = generate_basic_bem_workflow()
+
+    Parameters
+    ----------
+    subject_id : str, optional
+        FreeSurfer subject ID. Can also be connected to ``inputnode.subject_id``.
+    subjects_dir : str, optional
+        FreeSurfer subjects directory. Can also be connected to
+        ``inputnode.subjects_dir``.
+    name : str
+        Name of the workflow.
+
+    Notes
+    -----
+    The ``outputnode`` provides ``subject_id``, ``subjects_dir`` and the paths of the
+    installed surfaces: ``brain_surf``, ``inner_skull_surf``, ``outer_skull_surf`` and
+    ``outer_skin_surf``.
+    """
+    wf, inputnode, install_surfaces = _init_bem_workflow(name, subject_id, subjects_dir)
+
+    watershed = Node(MakeWatershedBEM(), name='watershed')
+    watershed.inputs.overwrite = True
+
+    wf.connect(inputnode, 'subject_id', watershed, 'subject')
+    wf.connect(inputnode, 'subjects_dir', watershed, 'subjects_dir')
+
+    # All surfaces from watershed
+    wf.connect(watershed, 'subject', install_surfaces, 'subject')
+    wf.connect(watershed, 'subjects_dir', install_surfaces, 'subjects_dir')
+    wf.connect(watershed, 'watershed_brain_surf', install_surfaces, 'brain')
+    wf.connect(watershed, 'watershed_inner_skull', install_surfaces, 'inner_skull')
+    wf.connect(watershed, 'watershed_outer_skull', install_surfaces, 'outer_skull')
+    wf.connect(watershed, 'watershed_outer_skin', install_surfaces, 'outer_skin')
+
+    return wf
+
+
+def generate_refined_bem_workflow(
+        subject_id=None,
+        subjects_dir=None,
+        name="refined_bem_workflow"):
+    """Build the refined BEM workflow, using a refined brain mask.
+
+    The brain and inner skull surfaces are computed from the FreeSurfer brain mask
+    refined with the ``aseg`` segmentation:
+
+    1. the mask is refined (``RefineBrainMask``) and binarized;
+    2. a surface is extracted with marching cubes (``mri_mc``), smoothed and
+       decimated to 5120 triangles;
+    3. the brain surface is obtained by expanding it by 1 mm, and the inner skull
+       surface by expanding the brain surface by a further 3 mm.
+
+    The outer skull and outer skin surfaces are computed with
+    :func:`mne.bem.make_watershed_bem`. All surfaces are installed in
+    ``subjects_dir/subject_id/bem``, and the refined brain mask is also saved in
+    that folder.
+
+    Workflow Graph
+        .. workflow::
+            :graph2use: orig
+            :simple_form: yes
+
+            from meegpype.workflows.anat.bem import generate_refined_bem_workflow
+            wf = generate_refined_bem_workflow()
+
+    Parameters
+    ----------
+    subject_id : str, optional
+        FreeSurfer subject ID. Can also be connected to ``inputnode.subject_id``.
+    subjects_dir : str, optional
+        FreeSurfer subjects directory. Can also be connected to
+        ``inputnode.subjects_dir``.
+    name : str
+        Name of the workflow.
+
+    Notes
+    -----
+    The ``outputnode`` provides ``subject_id``, ``subjects_dir`` and the paths of the
+    installed surfaces: ``brain_surf``, ``inner_skull_surf``, ``outer_skull_surf`` and
+    ``outer_skin_surf``.
+    """
+    # utils
+    def generate_subject_dir_path(subjects_dir, subject_id):
+        import os
+        return os.path.abspath(os.path.join(subjects_dir, subject_id))
+
+    wf, inputnode, install_surfaces = _init_bem_workflow(name, subject_id, subjects_dir)
+
+    fs_source = Node(FreeSurferSource(), name='fs_source')
+    fs_source.inputs.hemi = 'both'
+
+    convert_aseg = Node(MRIConvert(), name='convert_aseg')
+    convert_aseg.inputs.out_type = 'niigz'
+
+    convert_t1 = Node(MRIConvert(), name='convert_t1')
+    convert_t1.inputs.out_type = 'niigz'
+
+    convert_brain = Node(MRIConvert(), name='convert_brain')
+    convert_brain.inputs.out_type = 'niigz'
+
+    refine_brain_mask = Node(RefineBrainMask(), name='refine_brain_mask')
+
+    watershed = Node(MakeWatershedBEM(), name='watershed')
+    watershed.inputs.overwrite = True
+
+    mri_binarize = Node(MRIBinarize(), name='mri_binarize')
+    mri_binarize.inputs.output_volume = 'brainmask.mgz'
+    mri_binarize.inputs.match = 0
+    mri_binarize.inputs.inv = True
+
+    mri_mc = Node(MRImc(), name='mri_mc')
+    mri_mc.inputs.label_value = 1
+    mri_mc.inputs.output_surface = 'brain_mc.surf'
+
+    mris_smooth = Node(MRIsSmooth(), name='mris_smooth')
+    mris_smooth.inputs.output_surface = 'brain_mc_smooth.surf'
+    mris_smooth.inputs.average = 100
+    mris_smooth.inputs.n_iteration = 100
+
+    decimate_surface = Node(DecimateSurface(), name='decimate_surface')
+    decimate_surface.inputs.n_triangles = 5120
+    decimate_surface.inputs.method = 'sphere'
+    decimate_surface.inputs.output_surface = 'brain_mc_decimated.surf'
+
+    mris_expand_brain = Node(MRIsExpand(), name='mris_expand_brain')
+    mris_expand_brain.inputs.distance = 1
+    mris_expand_brain.inputs.out_name = 'brain.surf'
+
+    mris_expand_inner_skull = Node(MRIsExpand(), name='mris_expand_inner_skull')
+    mris_expand_inner_skull.inputs.distance = 3
+    mris_expand_inner_skull.inputs.out_name = 'inner_skull.surf'
+    mris_expand_inner_skull.inputs.smooth_averages = 10
+
+    generate_bem_path = pe.Node(
+        Function(
+            input_names=['subjects_dir', 'subject_id'],
+            output_names=['subject_dir'],
+            function=generate_subject_dir_path,
+        ),
+        name='generate_bem_path',
+    )
+
+    datasink_brain_vol = Node(DataSink(), name='datasink_brain_vol')
+
+    ## Connections
+    wf.connect(inputnode, 'subject_id', fs_source, 'subject_id')
+    wf.connect(inputnode, 'subjects_dir', fs_source, 'subjects_dir')
+
+    wf.connect(fs_source, 'aseg', convert_aseg, 'in_file')
+    wf.connect(fs_source, 'T1', convert_t1, 'in_file')
+    wf.connect(fs_source, 'brain', convert_brain, 'in_file')
+
+    wf.connect(convert_t1, 'out_file', refine_brain_mask, 'in_anat')
+    wf.connect(convert_brain, 'out_file', refine_brain_mask, 'in_ants')
+    wf.connect(convert_aseg, 'out_file', refine_brain_mask, 'in_aseg')
+
+    wf.connect(inputnode, 'subject_id', watershed, 'subject')
+    wf.connect(inputnode, 'subjects_dir', watershed, 'subjects_dir')
+
+    wf.connect(inputnode, 'subjects_dir', generate_bem_path, 'subjects_dir')
+    wf.connect(inputnode, 'subject_id', generate_bem_path, 'subject_id')
+
+    wf.connect(refine_brain_mask, 'out_file', mri_binarize, 'input_volume')
+
+    wf.connect(mri_binarize, 'output_volume', mri_mc, 'input_volume')
+    wf.connect(mri_mc, 'output_surface', mris_smooth, 'input_surface')
+
+    wf.connect(mris_smooth, 'output_surface', decimate_surface, 'input_surface')
+
+    wf.connect(decimate_surface, 'output_surface', mris_expand_brain, 'in_file')
+    wf.connect(mris_expand_brain, 'out_file', mris_expand_inner_skull, 'in_file')
+
+    wf.connect(refine_brain_mask, 'out_file', datasink_brain_vol, 'bem.@brain_vol')
+    wf.connect(generate_bem_path, 'subject_dir', datasink_brain_vol, 'base_directory')
+
+    # Refined brain and inner skull, outer skull and skin from watershed
+    wf.connect(watershed, 'subject', install_surfaces, 'subject')
+    wf.connect(watershed, 'subjects_dir', install_surfaces, 'subjects_dir')
+    wf.connect(mris_expand_brain, 'out_file', install_surfaces, 'brain')
+    wf.connect(mris_expand_inner_skull, 'out_file', install_surfaces, 'inner_skull')
+    wf.connect(watershed, 'watershed_outer_skull', install_surfaces, 'outer_skull')
+    wf.connect(watershed, 'watershed_outer_skin', install_surfaces, 'outer_skin')
+
+    return wf
+
+
+def generate_bem_workflow(
+        subject_id=None,
+        subjects_dir=None,
+        name="freesurfer_bem_surfaces",
+        method="basic"):
+    """Build a BEM workflow.
+
+    Parameters
+    ----------
+    subject_id : str, optional
+        FreeSurfer subject ID. Can also be connected to ``inputnode.subject_id``.
+    subjects_dir : str, optional
+        FreeSurfer subjects directory. Can also be connected to
+        ``inputnode.subjects_dir``.
+    name : str
+        Name of the workflow.
+    method : ``"basic"`` | ``"refined"``
+        The method used to compute the BEM surfaces, see
+        :func:`generate_basic_bem_workflow` and :func:`generate_refined_bem_workflow`.
+    """
     if method == "basic":
-        watershed = Node(MakeWatershedBEM(), name='watershed')
-        watershed.inputs.overwrite = True
-
-        wf.connect(inputnode, 'subject_id', watershed, 'subject')
-        wf.connect(inputnode, 'subjects_dir', watershed, 'subjects_dir')
-
-        # All surfaces from watershed
-        wf.connect(watershed, 'subject', install_surfaces, 'subject')
-        wf.connect(watershed, 'subjects_dir', install_surfaces, 'subjects_dir')
-        wf.connect(watershed, 'watershed_brain_surf', install_surfaces, 'brain')
-        wf.connect(watershed, 'watershed_inner_skull', install_surfaces, 'inner_skull')
-        wf.connect(watershed, 'watershed_outer_skull', install_surfaces, 'outer_skull')
-        wf.connect(watershed, 'watershed_outer_skin', install_surfaces, 'outer_skin')
-
+        return generate_basic_bem_workflow(subject_id=subject_id, subjects_dir=subjects_dir, name=name)
     elif method == "refined":
-        fs_source = Node(FreeSurferSource(), name='fs_source')
-        fs_source.inputs.hemi = 'both'
-
-        convert_aseg = Node(MRIConvert(), name='convert_aseg')
-        convert_aseg.inputs.out_type = 'niigz'
-
-        convert_t1 = Node(MRIConvert(), name='convert_t1')
-        convert_t1.inputs.out_type = 'niigz'
-
-        convert_brain = Node(MRIConvert(), name='convert_brain')
-        convert_brain.inputs.out_type = 'niigz'
-
-        refine_brain_mask = Node(RefineBrainMask(), name='refine_brain_mask')
-
-        watershed = Node(MakeWatershedBEM(), name='watershed')
-        watershed.inputs.overwrite = True
-
-        mri_binarize = Node(MRIBinarize(), name='mri_binarize')
-        mri_binarize.inputs.output_volume = 'brainmask.mgz'
-        mri_binarize.inputs.match = 0
-        mri_binarize.inputs.inv = True
-
-        mri_mc = Node(MRImc(), name='mri_mc')
-        mri_mc.inputs.label_value = 1
-        mri_mc.inputs.output_surface = 'brain_mc.surf'
-
-        mris_smooth = Node(MRIsSmooth(), name='mris_smooth')
-        mris_smooth.inputs.output_surface = 'brain_mc_smooth.surf'
-        mris_smooth.inputs.average = 100
-        mris_smooth.inputs.n_iteration = 100
-
-        decimate_surface = Node(DecimateSurface(), name='decimate_surface')
-        decimate_surface.inputs.n_triangles = 5120
-        decimate_surface.inputs.method = 'sphere'
-        decimate_surface.inputs.output_surface = 'brain_mc_decimated.surf'
-
-        mris_expand_brain = Node(MRIsExpand(), name='mris_expand_brain')
-        mris_expand_brain.inputs.distance = 1
-        mris_expand_brain.inputs.out_name = 'brain.surf'
-
-        mris_expand_inner_skull = Node(MRIsExpand(), name='mris_expand_inner_skull')
-        mris_expand_inner_skull.inputs.distance = 3
-        mris_expand_inner_skull.inputs.out_name = 'inner_skull.surf'
-        mris_expand_inner_skull.inputs.smooth_averages = 5
-
-        generate_bem_path = pe.Node(
-            Function(
-                input_names=['subjects_dir', 'subject_id'],
-                output_names=['subject_dir'],
-                function=generate_subject_dir_path,
-            ),
-            name='generate_bem_path',
-        )
-
-        datasink_brain_vol = Node(DataSink(), name='datasink_brain_vol')
-
-        ## Connections
-        wf.connect(inputnode, 'subject_id', fs_source, 'subject_id')
-        wf.connect(inputnode, 'subjects_dir', fs_source, 'subjects_dir')
-
-        wf.connect(fs_source, 'aseg', convert_aseg, 'in_file')
-        wf.connect(fs_source, 'T1', convert_t1, 'in_file')
-        wf.connect(fs_source, 'brain', convert_brain, 'in_file')
-
-        wf.connect(convert_t1, 'out_file', refine_brain_mask, 'in_anat')
-        wf.connect(convert_brain, 'out_file', refine_brain_mask, 'in_ants')
-        wf.connect(convert_aseg, 'out_file', refine_brain_mask, 'in_aseg')
-
-        wf.connect(inputnode, 'subject_id', watershed, 'subject')
-        wf.connect(inputnode, 'subjects_dir', watershed, 'subjects_dir')
-
-        wf.connect(inputnode, 'subjects_dir', generate_bem_path, 'subjects_dir')
-        wf.connect(inputnode, 'subject_id', generate_bem_path, 'subject_id')
-
-        wf.connect(refine_brain_mask, 'out_file', mri_binarize, 'input_volume')
-
-        wf.connect(mri_binarize, 'output_volume', mri_mc, 'input_volume')
-        wf.connect(mri_mc, 'output_surface', mris_smooth, 'input_surface')
-
-        wf.connect(mris_smooth, 'output_surface', decimate_surface, 'input_surface')
-
-        wf.connect(decimate_surface, 'output_surface', mris_expand_brain, 'in_file')
-        wf.connect(mris_expand_brain, 'out_file', mris_expand_inner_skull, 'in_file')
-
-        wf.connect(refine_brain_mask, 'out_file', datasink_brain_vol, 'bem.@brain_vol')
-        wf.connect(generate_bem_path, 'subject_dir', datasink_brain_vol, 'base_directory')
-
-        # Refined brain and inner skull, outer skull and skin from watershed
-        wf.connect(watershed, 'subject', install_surfaces, 'subject')
-        wf.connect(watershed, 'subjects_dir', install_surfaces, 'subjects_dir')
-        wf.connect(mris_expand_brain, 'out_file', install_surfaces, 'brain')
-        wf.connect(mris_expand_inner_skull, 'out_file', install_surfaces, 'inner_skull')
-        wf.connect(watershed, 'watershed_outer_skull', install_surfaces, 'outer_skull')
-        wf.connect(watershed, 'watershed_outer_skin', install_surfaces, 'outer_skin')
-
+        return generate_refined_bem_workflow(subject_id=subject_id, subjects_dir=subjects_dir, name=name)
     else:
         raise ValueError(f"Unknown method: {method}")
-    return wf
