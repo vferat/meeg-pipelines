@@ -230,8 +230,8 @@ def generate_refined_bem_workflow(
 
     mris_smooth = Node(MRIsSmooth(), name='mris_smooth')
     mris_smooth.inputs.output_surface = 'brain_mc_smooth.surf'
-    mris_smooth.inputs.average = 100
-    mris_smooth.inputs.n_iteration = 100
+    mris_smooth.inputs.average = 15
+    mris_smooth.inputs.n_iteration = 15
 
     decimate_surface = Node(DecimateSurface(), name='decimate_surface')
     decimate_surface.inputs.n_triangles = 5120
@@ -243,7 +243,7 @@ def generate_refined_bem_workflow(
     mris_expand_brain.inputs.out_name = 'brain.surf'
 
     mris_expand_inner_skull = Node(MRIsExpand(), name='mris_expand_inner_skull')
-    mris_expand_inner_skull.inputs.distance = 3
+    mris_expand_inner_skull.inputs.distance = 5
     mris_expand_inner_skull.inputs.out_name = 'inner_skull.surf'
     mris_expand_inner_skull.inputs.smooth_averages = 5
 
