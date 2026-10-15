@@ -13,5 +13,6 @@ Subpackages
    :maxdepth: 1
 
    meegpype.interfaces.connectome_wb
+   meegpype.interfaces.custom
    meegpype.interfaces.freesurfer
    meegpype.interfaces.mne

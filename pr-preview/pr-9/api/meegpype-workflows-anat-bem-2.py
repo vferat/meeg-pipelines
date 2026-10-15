@@ -1,2 +1,2 @@
-from meegpype.workflows.anat.bem import generate_refined_bem_workflow
-wf = generate_refined_bem_workflow()
+from meegpype.workflows.anat.bem import generate_deformable_bem_workflow
+wf = generate_deformable_bem_workflow()
