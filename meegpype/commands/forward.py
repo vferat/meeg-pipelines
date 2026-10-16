@@ -31,7 +31,7 @@ def run() -> None:
     )
     parser.add_argument(
         "--bem-method", 
-        help="Method to use for BEM surface generation. Options: 'basic', 'refined' or 'deformable'. Default is 'basic'.",
+        help="Method to use for BEM surface generation. Options: 'basic' or 'refined'. Default is 'basic'.",
         default="basic",
     )
     parser.add_argument(

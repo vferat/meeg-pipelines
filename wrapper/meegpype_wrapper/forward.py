@@ -32,7 +32,7 @@ def add_parser(subparsers) -> None:
     )
     subparser.add_argument(
         "--bem-method",
-        help="Method to use for BEM surface generation. Options: 'basic', 'refined' or 'deformable'. Default is 'basic'.",
+        help="Method to use for BEM surface generation. Options: 'basic' or 'refined'. Default is 'basic'.",
         type=str,
         default="basic",
     )

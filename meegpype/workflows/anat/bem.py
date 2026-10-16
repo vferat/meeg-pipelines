@@ -11,17 +11,14 @@ import nipype.pipeline.engine as pe
 from nipype import Node
 
 from nipype.interfaces.utility import Function, IdentityInterface
-from nipype.interfaces.io import FreeSurferSource, DataSink
-from nipype.interfaces.freesurfer import MRIsExpand, MRIConvert
-
-from niworkflows.interfaces.freesurfer import RefineBrainMask
+from nipype.interfaces.io import FreeSurferSource
+from nipype.interfaces.freesurfer import MRIsExpand
 
 from ...interfaces.freesurfer.mri_mc import MRImc
 from ...interfaces.freesurfer.mris_smooth import MRIsSmooth
 from ...interfaces.freesurfer.mri_binarize import MRIBinarize
 from ...interfaces.mne.decimate_surface import DecimateSurface
 from ...interfaces.mne.bem import MakeWatershedBEM
-from ...interfaces.custom import FitSurfaceToMask
 
 
 def install_bem_surfaces(subjects_dir, subject, brain, inner_skull, outer_skull, outer_skin):
@@ -99,61 +96,6 @@ def _init_bem_workflow(name, subject_id, subjects_dir):
     return wf, inputnode, install_surfaces
 
 
-def _generate_subject_dir_path(subjects_dir, subject_id):
-    import os
-    return os.path.abspath(os.path.join(subjects_dir, subject_id))
-
-
-def _init_refined_brain_mask(wf, inputnode):
-    """Add the nodes computing the refined brain mask, saved in the ``bem`` folder.
-
-    Returns the ``fs_source`` node and the ``refine_brain_mask`` node.
-    """
-    fs_source = Node(FreeSurferSource(), name='fs_source')
-    fs_source.inputs.hemi = 'both'
-
-    convert_aseg = Node(MRIConvert(), name='convert_aseg')
-    convert_aseg.inputs.out_type = 'niigz'
-
-    convert_t1 = Node(MRIConvert(), name='convert_t1')
-    convert_t1.inputs.out_type = 'niigz'
-
-    convert_brain = Node(MRIConvert(), name='convert_brain')
-    convert_brain.inputs.out_type = 'niigz'
-
-    refine_brain_mask = Node(RefineBrainMask(), name='refine_brain_mask')
-
-    generate_bem_path = pe.Node(
-        Function(
-            input_names=['subjects_dir', 'subject_id'],
-            output_names=['subject_dir'],
-            function=_generate_subject_dir_path,
-        ),
-        name='generate_bem_path',
-    )
-
-    datasink_brain_vol = Node(DataSink(), name='datasink_brain_vol')
-
-    wf.connect(inputnode, 'subject_id', fs_source, 'subject_id')
-    wf.connect(inputnode, 'subjects_dir', fs_source, 'subjects_dir')
-
-    wf.connect(fs_source, 'aseg', convert_aseg, 'in_file')
-    wf.connect(fs_source, 'T1', convert_t1, 'in_file')
-    wf.connect(fs_source, 'brain', convert_brain, 'in_file')
-
-    wf.connect(convert_t1, 'out_file', refine_brain_mask, 'in_anat')
-    wf.connect(convert_brain, 'out_file', refine_brain_mask, 'in_ants')
-    wf.connect(convert_aseg, 'out_file', refine_brain_mask, 'in_aseg')
-
-    wf.connect(inputnode, 'subjects_dir', generate_bem_path, 'subjects_dir')
-    wf.connect(inputnode, 'subject_id', generate_bem_path, 'subject_id')
-
-    wf.connect(refine_brain_mask, 'out_file', datasink_brain_vol, 'bem.@brain_vol')
-    wf.connect(generate_bem_path, 'subject_dir', datasink_brain_vol, 'base_directory')
-
-    return fs_source, refine_brain_mask
-
-
 def generate_basic_bem_workflow(
         subject_id=None,
         subjects_dir=None,
@@ -211,21 +153,22 @@ def generate_refined_bem_workflow(
         subject_id=None,
         subjects_dir=None,
         name="refined_bem_workflow"):
-    """Build the refined BEM workflow, using a refined brain mask.
+    """Build the refined BEM workflow, using the FreeSurfer brain mask.
 
-    The brain and inner skull surfaces are computed from the FreeSurfer brain mask
-    refined with the ``aseg`` segmentation:
+    The brain and inner skull surfaces are computed from the FreeSurfer
+    ``brainmask.mgz``. In the forward pipeline, it holds the ANTs brain extraction
+    computed by sMRIPrep (FreeSurfer's own skull stripping is skipped), which
+    includes the CSF surrounding the brain:
 
-    1. the mask is refined (``RefineBrainMask``) and binarized;
+    1. the mask is binarized;
     2. a surface is extracted with marching cubes (``mri_mc``), smoothed and
        decimated to 5120 triangles;
     3. the brain surface is obtained by expanding it by 1 mm, and the inner skull
-       surface by expanding the brain surface by a further 3 mm.
+       surface by expanding the brain surface by a further 5 mm.
 
     The outer skull and outer skin surfaces are computed with
     :func:`mne.bem.make_watershed_bem`. All surfaces are installed in
-    ``subjects_dir/subject_id/bem``, and the refined brain mask is also saved in
-    that folder.
+    ``subjects_dir/subject_id/bem``.
 
     Workflow Graph
         .. workflow::
@@ -252,7 +195,7 @@ def generate_refined_bem_workflow(
     ``outer_skin_surf``.
     """
     wf, inputnode, install_surfaces = _init_bem_workflow(name, subject_id, subjects_dir)
-    _, refine_brain_mask = _init_refined_brain_mask(wf, inputnode)
+    fs_source = Node(FreeSurferSource(), name='fs_source')
 
     watershed = Node(MakeWatershedBEM(), name='watershed')
     watershed.inputs.overwrite = True
@@ -289,7 +232,9 @@ def generate_refined_bem_workflow(
     wf.connect(inputnode, 'subject_id', watershed, 'subject')
     wf.connect(inputnode, 'subjects_dir', watershed, 'subjects_dir')
 
-    wf.connect(refine_brain_mask, 'out_file', mri_binarize, 'input_volume')
+    wf.connect(inputnode, 'subject_id', fs_source, 'subject_id')
+    wf.connect(inputnode, 'subjects_dir', fs_source, 'subjects_dir')
+    wf.connect(fs_source, 'brainmask', mri_binarize, 'input_volume')
 
     wf.connect(mri_binarize, 'output_volume', mri_mc, 'input_volume')
     wf.connect(mri_mc, 'output_surface', mris_smooth, 'input_surface')
@@ -304,89 +249,6 @@ def generate_refined_bem_workflow(
     wf.connect(watershed, 'subjects_dir', install_surfaces, 'subjects_dir')
     wf.connect(mris_expand_brain, 'out_file', install_surfaces, 'brain')
     wf.connect(mris_expand_inner_skull, 'out_file', install_surfaces, 'inner_skull')
-    wf.connect(watershed, 'watershed_outer_skull', install_surfaces, 'outer_skull')
-    wf.connect(watershed, 'watershed_outer_skin', install_surfaces, 'outer_skin')
-
-    return wf
-
-
-def generate_deformable_bem_workflow(
-        subject_id=None,
-        subjects_dir=None,
-        name="deformable_bem_workflow",
-        brain_offset=1.0,
-        inner_skull_offset=4.0):
-    """Build the deformable BEM workflow, fitting a template to a refined brain mask.
-
-    The brain and inner skull surfaces are computed from the FreeSurfer brain mask
-    refined with the ``aseg`` segmentation (as in
-    :func:`generate_refined_bem_workflow`), with a deformable template
-    (:class:`~meegpype.interfaces.custom.fit_surface.FitSurfaceToMask`): an
-    icosahedron (5120 triangles) enclosing the mask is shrunk until it reaches the
-    surface at a given distance from the mask boundary.
-    The distances are measured on the mask itself, so the surfaces do not shrink with
-    smoothing, and the brain surface is always inside the inner skull surface.
-
-    The outer skull and outer skin surfaces are computed with
-    :func:`mne.bem.make_watershed_bem`. All surfaces are installed in
-    ``subjects_dir/subject_id/bem``, and the refined brain mask is also saved in
-    that folder.
-
-    Workflow Graph
-        .. workflow::
-            :graph2use: orig
-            :simple_form: yes
-
-            from meegpype.workflows.anat.bem import generate_deformable_bem_workflow
-            wf = generate_deformable_bem_workflow()
-
-    Parameters
-    ----------
-    subject_id : str, optional
-        FreeSurfer subject ID. Can also be connected to ``inputnode.subject_id``.
-    subjects_dir : str, optional
-        FreeSurfer subjects directory. Can also be connected to
-        ``inputnode.subjects_dir``.
-    name : str
-        Name of the workflow.
-    brain_offset : float
-        Distance (mm) between the refined brain mask and the brain surface.
-    inner_skull_offset : float
-        Distance (mm) between the refined brain mask and the inner skull surface.
-
-    Notes
-    -----
-    The ``outputnode`` provides ``subject_id``, ``subjects_dir`` and the paths of the
-    installed surfaces: ``brain_surf``, ``inner_skull_surf``, ``outer_skull_surf`` and
-    ``outer_skin_surf``.
-    """
-    wf, inputnode, install_surfaces = _init_bem_workflow(name, subject_id, subjects_dir)
-    fs_source, refine_brain_mask = _init_refined_brain_mask(wf, inputnode)
-
-    watershed = Node(MakeWatershedBEM(), name='watershed')
-    watershed.inputs.overwrite = True
-
-    fit_brain = Node(FitSurfaceToMask(), name='fit_brain')
-    fit_brain.inputs.offset = brain_offset
-    fit_brain.inputs.output_surface = 'brain.surf'
-
-    fit_inner_skull = Node(FitSurfaceToMask(), name='fit_inner_skull')
-    fit_inner_skull.inputs.offset = inner_skull_offset
-    fit_inner_skull.inputs.output_surface = 'inner_skull.surf'
-
-    ## Connections
-    wf.connect(inputnode, 'subject_id', watershed, 'subject')
-    wf.connect(inputnode, 'subjects_dir', watershed, 'subjects_dir')
-
-    for fit in (fit_brain, fit_inner_skull):
-        wf.connect(refine_brain_mask, 'out_file', fit, 'in_mask')
-        wf.connect(fs_source, 'T1', fit, 'in_reference')
-
-    # Fitted brain and inner skull, outer skull and skin from watershed
-    wf.connect(watershed, 'subject', install_surfaces, 'subject')
-    wf.connect(watershed, 'subjects_dir', install_surfaces, 'subjects_dir')
-    wf.connect(fit_brain, 'output_surface', install_surfaces, 'brain')
-    wf.connect(fit_inner_skull, 'output_surface', install_surfaces, 'inner_skull')
     wf.connect(watershed, 'watershed_outer_skull', install_surfaces, 'outer_skull')
     wf.connect(watershed, 'watershed_outer_skin', install_surfaces, 'outer_skin')
 
@@ -409,16 +271,13 @@ def generate_bem_workflow(
         ``inputnode.subjects_dir``.
     name : str
         Name of the workflow.
-    method : ``"basic"`` | ``"refined"`` | ``"deformable"``
+    method : ``"basic"`` | ``"refined"``
         The method used to compute the BEM surfaces, see
-        :func:`generate_basic_bem_workflow`, :func:`generate_refined_bem_workflow`
-        and :func:`generate_deformable_bem_workflow`.
+        :func:`generate_basic_bem_workflow` and :func:`generate_refined_bem_workflow`.
     """
     if method == "basic":
         return generate_basic_bem_workflow(subject_id=subject_id, subjects_dir=subjects_dir, name=name)
     elif method == "refined":
         return generate_refined_bem_workflow(subject_id=subject_id, subjects_dir=subjects_dir, name=name)
-    elif method == "deformable":
-        return generate_deformable_bem_workflow(subject_id=subject_id, subjects_dir=subjects_dir, name=name)
     else:
         raise ValueError(f"Unknown method: {method}")
