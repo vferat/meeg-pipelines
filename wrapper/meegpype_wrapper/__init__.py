@@ -1,1 +1,1 @@
-DOCKER_IMAGE = "ghcr.io/vferat/meeg-pipelines:smriprep-0.19.1-main"
+DOCKER_IMAGE = "ghcr.io/vferat/meeg-pipelines:pr-9"

@@ -8,6 +8,7 @@ from nipype.interfaces.base import (
     Directory,
     File,
 )
+import shutil
 import mne.bem
 
 
@@ -61,6 +62,11 @@ class MakeWatershedBEMOutputSpec(TraitedSpec):
     outer_skin = traits.File(des="Outer skin surface", exists=True, hash_files=False)
     outer_skull = traits.File(des="Outer skull surface", exists=True, hash_files=False)
     head = traits.File(des="Head model", exists=True, hash_files=False)
+    # Original watershed surfaces in bem/watershed: unlike bem/*.surf, they are never replaced
+    watershed_brain_surf = traits.File(desc="Original watershed brain surface", exists=True)
+    watershed_inner_skull = traits.File(desc="Original watershed inner skull surface", exists=True)
+    watershed_outer_skull = traits.File(desc="Original watershed outer skull surface", exists=True)
+    watershed_outer_skin = traits.File(desc="Original watershed outer skin surface", exists=True)
 
 
 class MakeWatershedBEM(BaseInterface):
@@ -95,6 +101,12 @@ class MakeWatershedBEM(BaseInterface):
         outputs["outer_skin"] = os.path.join(subject_dir, "bem", "outer_skin.surf")
         outputs["outer_skull"] = os.path.join(subject_dir, "bem", "outer_skull.surf")
         outputs["head"] = os.path.join(subject_dir, "bem", f"{subject}-head.fif")
+
+        watershed_dir = os.path.join(subject_dir, "bem", "watershed")
+        outputs["watershed_brain_surf"] = os.path.join(watershed_dir, f"{subject}_brain_surface")
+        outputs["watershed_inner_skull"] = os.path.join(watershed_dir, f"{subject}_inner_skull_surface")
+        outputs["watershed_outer_skull"] = os.path.join(watershed_dir, f"{subject}_outer_skull_surface")
+        outputs["watershed_outer_skin"] = os.path.join(watershed_dir, f"{subject}_outer_skin_surface")
         return outputs
 
 
@@ -105,7 +117,17 @@ class SetupForwardModelInputSpec(TraitedSpec):
         mandatory=True,
     )
     subject = traits.Str(desc="Subject name (required)", mandatory=True)
-    subjects_dir = Directory(desc="Subjects directory", exists=True, mandatory=True)
+    inner_skull = File(desc="Inner skull surface (FreeSurfer format).", exists=True, mandatory=True)
+    outer_skull = File(
+        desc="Outer skull surface (FreeSurfer format). Required for a 3-layer model.",
+        exists=True,
+        mandatory=False,
+    )
+    outer_skin = File(
+        desc="Outer skin surface (FreeSurfer format). Required for a 3-layer model.",
+        exists=True,
+        mandatory=False,
+    )
     ico = traits.Int(
         desc="The surface ico downsampling to use, e.g. 5=20484, 4=5120, 3=1280. If None, no subsampling is applied.",
         mandatory=False,
@@ -150,13 +172,27 @@ class SetupForwardModel(BaseInterface):
 
         fname = inputs["fname"]
         subject = inputs["subject"]
-        subjects_dir = inputs["subjects_dir"]
         ico = inputs["ico"]
         conductivity = inputs["conductivity"]
         overwrite = inputs["overwrite"]
         verbose = inputs["verbose"]
 
+        surfaces = ["inner_skull"]
+        if len(conductivity) == 3:
+            surfaces += ["outer_skull", "outer_skin"]
+        for surface in surfaces:
+            if surface not in inputs:
+                raise ValueError(f"{surface} is required for a {len(conductivity)}-layer model.")
+
+        # mne.make_bem_model only reads surfaces from subjects_dir/subject/bem,
+        # so copy the input surfaces into a subjects_dir local to the node.
         cwd = os.getcwd()
+        subjects_dir = os.path.join(cwd, "subjects")
+        bem_dir = os.path.join(subjects_dir, subject, "bem")
+        os.makedirs(bem_dir, exist_ok=True)
+        for surface in surfaces:
+            shutil.copyfile(inputs[surface], os.path.join(bem_dir, f"{surface}.surf"))
+
         bem_surfaces = mne.make_bem_model(
             subject,
             ico=ico,
