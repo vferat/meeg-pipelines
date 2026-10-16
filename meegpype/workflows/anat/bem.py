@@ -164,7 +164,7 @@ def generate_refined_bem_workflow(
     2. a surface is extracted with marching cubes (``mri_mc``), smoothed and
        decimated to 5120 triangles;
     3. the brain surface is obtained by expanding it by 1 mm, and the inner skull
-       surface by expanding the brain surface by a further 5 mm.
+       surface by expanding the brain surface by a further 2 mm.
 
     The outer skull and outer skin surfaces are computed with
     :func:`mne.bem.make_watershed_bem`. All surfaces are installed in
@@ -224,7 +224,7 @@ def generate_refined_bem_workflow(
     mris_expand_brain.inputs.out_name = 'brain.surf'
 
     mris_expand_inner_skull = Node(MRIsExpand(), name='mris_expand_inner_skull')
-    mris_expand_inner_skull.inputs.distance = 5
+    mris_expand_inner_skull.inputs.distance = 2
     mris_expand_inner_skull.inputs.out_name = 'inner_skull.surf'
     mris_expand_inner_skull.inputs.smooth_averages = 3
 
