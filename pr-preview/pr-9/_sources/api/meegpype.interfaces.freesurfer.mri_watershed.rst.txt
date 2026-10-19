@@ -1,7 +1,0 @@
-meegpype.interfaces.freesurfer.mri\_watershed module
-====================================================
-
-.. automodule:: meegpype.interfaces.freesurfer.mri_watershed
-   :members:
-   :show-inheritance:
-   :undoc-members:

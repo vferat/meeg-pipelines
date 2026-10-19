@@ -1,7 +1,0 @@
-meegpype.interfaces.freesurfer.mri\_binarize module
-===================================================
-
-.. automodule:: meegpype.interfaces.freesurfer.mri_binarize
-   :members:
-   :show-inheritance:
-   :undoc-members:

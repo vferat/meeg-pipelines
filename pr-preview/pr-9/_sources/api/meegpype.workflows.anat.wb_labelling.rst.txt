@@ -1,7 +1,0 @@
-meegpype.workflows.anat.wb\_labelling module
-============================================
-
-.. automodule:: meegpype.workflows.anat.wb_labelling
-   :members:
-   :show-inheritance:
-   :undoc-members:

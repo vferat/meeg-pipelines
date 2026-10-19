@@ -1,7 +1,0 @@
-meegpype.interfaces.connectome\_wb.label\_resample module
-=========================================================
-
-.. automodule:: meegpype.interfaces.connectome_wb.label_resample
-   :members:
-   :show-inheritance:
-   :undoc-members:

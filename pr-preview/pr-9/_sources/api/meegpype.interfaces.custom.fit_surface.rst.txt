@@ -1,7 +1,0 @@
-meegpype.interfaces.custom.fit\_surface module
-==============================================
-
-.. automodule:: meegpype.interfaces.custom.fit_surface
-   :members:
-   :show-inheritance:
-   :undoc-members:

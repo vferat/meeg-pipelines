@@ -1,7 +1,0 @@
-meegpype.interfaces.mne.sources module
-======================================
-
-.. automodule:: meegpype.interfaces.mne.sources
-   :members:
-   :show-inheritance:
-   :undoc-members:

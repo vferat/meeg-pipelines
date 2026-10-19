@@ -1,9 +1,0 @@
-﻿meegpype.add\_file\_handler
-===========================
-
-.. currentmodule:: meegpype
-
-.. autofunction:: add_file_handler
-
-.. minigallery:: meegpype.add_file_handler
-    :add-heading:

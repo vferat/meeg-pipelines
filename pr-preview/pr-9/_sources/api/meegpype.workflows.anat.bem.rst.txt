@@ -1,7 +1,0 @@
-meegpype.workflows.anat.bem module
-==================================
-
-.. automodule:: meegpype.workflows.anat.bem
-   :members:
-   :show-inheritance:
-   :undoc-members:

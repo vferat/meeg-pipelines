@@ -1,7 +1,0 @@
-meegpype.workflows.anat.fs\_individual\_atlas module
-====================================================
-
-.. automodule:: meegpype.workflows.anat.fs_individual_atlas
-   :members:
-   :show-inheritance:
-   :undoc-members:

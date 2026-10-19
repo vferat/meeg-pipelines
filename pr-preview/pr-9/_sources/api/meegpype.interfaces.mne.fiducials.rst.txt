@@ -1,7 +1,0 @@
-meegpype.interfaces.mne.fiducials module
-========================================
-
-.. automodule:: meegpype.interfaces.mne.fiducials
-   :members:
-   :show-inheritance:
-   :undoc-members:

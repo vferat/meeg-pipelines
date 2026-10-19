@@ -1,7 +1,0 @@
-meegpype.interfaces.mne.report module
-=====================================
-
-.. automodule:: meegpype.interfaces.mne.report
-   :members:
-   :show-inheritance:
-   :undoc-members:

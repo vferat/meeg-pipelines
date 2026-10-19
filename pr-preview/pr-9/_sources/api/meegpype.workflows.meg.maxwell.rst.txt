@@ -1,7 +1,0 @@
-meegpype.workflows.meg.maxwell module
-=====================================
-
-.. automodule:: meegpype.workflows.meg.maxwell
-   :members:
-   :show-inheritance:
-   :undoc-members:

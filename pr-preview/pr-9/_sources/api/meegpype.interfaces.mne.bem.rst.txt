@@ -1,7 +1,0 @@
-meegpype.interfaces.mne.bem module
-==================================
-
-.. automodule:: meegpype.interfaces.mne.bem
-   :members:
-   :show-inheritance:
-   :undoc-members:
