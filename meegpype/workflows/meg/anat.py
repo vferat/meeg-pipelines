@@ -100,7 +100,8 @@ def init_meg_anat_wf(
         ),
     )
     ### Watershed BEM
-    watershed_bem = generate_bem_workflow(name="watershed_bem_workflow", method=bem_method)
+    # method in the name so that basic and refined do not share cached nodes
+    watershed_bem = generate_bem_workflow(name=f"watershed_bem_{bem_method}_workflow", method=bem_method)
 
     ### Setup forward
     setup_forward_model = Node(SetupForwardModel(), name="setup_forward_model")
@@ -243,7 +244,17 @@ def init_meg_anat_wf(
     )
     wf.connect([(watershed_bem, setup_forward_model, [("outputnode.subject_id", "subject")])])
     wf.connect(
-        [(watershed_bem, setup_forward_model, [("outputnode.subjects_dir", "subjects_dir")])]
+        [
+            (
+                watershed_bem,
+                setup_forward_model,
+                [
+                    ("outputnode.inner_skull_surf", "inner_skull"),
+                    ("outputnode.outer_skull_surf", "outer_skull"),
+                    ("outputnode.outer_skin_surf", "outer_skin"),
+                ],
+            )
+        ]
     )
 
     wf.connect([(watershed_bem, make_head_surface, [("outputnode.subject_id", "subject")])])

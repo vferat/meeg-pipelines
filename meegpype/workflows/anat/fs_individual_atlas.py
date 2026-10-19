@@ -63,10 +63,68 @@ def _generate_annot_filename(atlas, hemi, subject):
     return subject_annot
 
 
-def generate_fs_labelling_workflow(
+def generate_fs_individual_labelling_workflow(
     name="freesurfer_labelling_workflow",
     base_dir=None,
 ):
+    """Build the FreeSurfer labelling workflow using an atlas classifier.
+
+    The cortex of each hemisphere is labelled with the atlas GCS classifier
+    (``mris_ca_label``), and the resulting annotations are combined with the ``aseg``
+    segmentation into a volumetric segmentation (``mri_aparc2aseg``).
+
+    The annotations are written to
+    ``subjects_dir/subject_id/label/{lh,rh}.<atlas_name>.annot``.
+
+    Workflow Graph
+        .. workflow::
+            :graph2use: orig
+            :simple_form: yes
+
+            from meegpype.workflows.anat.fs_individual_atlas import generate_fs_individual_labelling_workflow
+            wf = generate_fs_individual_labelling_workflow()
+
+    Parameters
+    ----------
+    name : str
+        Name of the workflow.
+    base_dir : str, optional
+        Working directory of the workflow.
+
+    Inputs
+    ------
+    subject_id
+        FreeSurfer subject identifier.
+    subjects_dir
+        FreeSurfer subjects directory.
+    atlas_name
+        Name of the atlas to be used for labelling. Must be one of the atlases
+        listed in ``meegpype.data.freesurfer.classifiers.ATLAS``.
+    data_dir
+        Path to the data directory containing the classifiers
+        (``classifiers/{lh,rh}.<atlas_name>.gcs``) and the lookup tables
+        (``LUTs/<atlas_name>_LUT.txt``).
+
+    Outputs
+    -------
+    volume
+        Path to the volumetric segmentation
+        (``<subject_id>_space-fsnative_atlas-<atlas>[_seg-<seg>][_scale-<scale>]_dseg.nii``).
+    lh_aseg
+        Path to the left hemisphere annotation, renamed with BIDS-like entities
+        (``<subject_id>_hemi-L_space-fsnative_atlas-<atlas>[_seg-<seg>][_scale-<scale>]_dseg.annot``).
+    rh_aseg
+        Path to the right hemisphere annotation, renamed with BIDS-like entities
+        (``<subject_id>_hemi-R_space-fsnative_atlas-<atlas>[_seg-<seg>][_scale-<scale>]_dseg.annot``).
+    atlas_name
+        Name of the atlas used for labelling.
+    lut
+        Path to the lookup table file.
+    subject_id
+        FreeSurfer subject identifier.
+    subjects_dir
+        FreeSurfer subjects directory.
+    """
     # Initilaze workflow
     workflow = pe.Workflow(name=name, base_dir=base_dir)
 

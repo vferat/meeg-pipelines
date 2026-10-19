@@ -2,10 +2,10 @@
 set -euo pipefail
 
 neurodocker generate docker \
-  --base-image ghcr.io/vferat/smriprep:0.19.1-dev \
+  --base-image ghcr.io/vferat/smriprep:0.19.4 \
   --pkg-manager apt \
-  --install graphviz ffmpeg libsm6 libxext6 xvfb x11-utils libxkbcommon-x11-0 libxcb-icccm4 libxcb-keysyms1 libxcb-xkb1 libxcb-cursor0 \
-  --install libosmesa6 libegl1 libgl1-mesa-dri \
+  --run "export LD_LIBRARY_PATH= && apt-get update -qq && apt-get install -y -q --no-install-recommends graphviz ffmpeg libsm6 libxext6 xvfb x11-utils libxkbcommon-x11-0 libxcb-icccm4 libxcb-keysyms1 libxcb-xkb1 libxcb-cursor0 && rm -rf /var/lib/apt/lists/*" \
+  --run "export LD_LIBRARY_PATH= && apt-get update -qq && apt-get install -y -q --no-install-recommends libosmesa6 libegl1 libgl1-mesa-dri && rm -rf /var/lib/apt/lists/*" \
   --run "micromamba install -y -n smriprep -c conda-forge 'nodejs>=20' && micromamba clean --all --yes" \
   --copy . /meeg-pipelines \
   --run "micromamba run -n smriprep pip install --no-cache-dir -e /meeg-pipelines" \

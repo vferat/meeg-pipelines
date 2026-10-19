@@ -20,15 +20,61 @@ def generate_fname(atlas_name, subject_id, classifier_data_dir):
     return (atlas_name, annot_lh, annot_rh, annot_command, label_fname)
 
 
-def generate_fs_labelling_workflow(
-    subject_id=None,
-    subjects_dir=None,
-    atlas_name=None,
-    classifier_data_dir=None,
+def generate_fs_template_labelling_workflow(
     name="freesurfer_labelling_workflow",
+    base_dir=None,
 ):
+    """Build the FreeSurfer labelling workflow using an fsaverage atlas.
+
+    The atlas annotations defined on ``fsaverage`` are projected onto the subject
+    surfaces (``mri_surf2surf``), and combined with the ``aseg`` segmentation into a
+    volumetric segmentation (``mri_aparc2aseg``).
+
+    Workflow Graph
+        .. workflow::
+            :graph2use: orig
+            :simple_form: yes
+
+            from meegpype.workflows.anat.fs_template_atlas import generate_fs_template_labelling_workflow
+            wf = generate_fs_template_labelling_workflow()
+
+    Parameters
+    ----------
+    name : str
+        Name of the workflow.
+    base_dir : str, optional
+        Working directory of the workflow.
+
+    Inputs
+    ------
+    subject_id
+        FreeSurfer subject identifier.
+    subjects_dir
+        FreeSurfer subjects directory.
+    atlas_name
+        Name of the atlas to be used for labelling.
+    classifier_data_dir
+        Path to the data directory containing the fsaverage annotations
+        (``fsaverage/label/{lh,rh}.<atlas_name>.annot``).
+
+    Outputs
+    -------
+    volume
+        Path to the volumetric segmentation
+        (``sub-<subject_id>_seg-<atlas_name>_space-fsnative_dseg.nii``).
+    lh_aseg
+        Path to the left hemisphere annotation projected onto the subject.
+    rh_aseg
+        Path to the right hemisphere annotation projected onto the subject.
+    atlas_name
+        Name of the atlas used for labelling.
+    subject_id
+        FreeSurfer subject identifier.
+    subjects_dir
+        FreeSurfer subjects directory.
+    """
     # Initilaze workflow
-    workflow = pe.Workflow(name=name)
+    workflow = pe.Workflow(name=name, base_dir=base_dir)
 
     ## Input
     inputnode = Node(
@@ -37,11 +83,6 @@ def generate_fs_labelling_workflow(
         ),
         name="inputnode",
     )
-    inputnode.inputs.subject_id = subject_id
-    inputnode.inputs.subjects_dir = subjects_dir
-    inputnode.inputs.atlas_name = atlas_name
-    inputnode.inputs.classifier_data_dir = classifier_data_dir
-
     source_subject = "fsaverage"
 
     # Generate annotation file names
@@ -154,6 +195,8 @@ def generate_fs_labelling_workflow(
         name="outputnode",
     )
     workflow.connect(aparc2aseg, "out_file", outputnode, "volume")
+    workflow.connect(surface_transform_lh, "out_file", outputnode, "lh_aseg")
+    workflow.connect(surface_transform_rh, "out_file", outputnode, "rh_aseg")
     workflow.connect(inputnode, "subject_id", outputnode, "subject_id")
     workflow.connect(inputnode, "subjects_dir", outputnode, "subjects_dir")
     workflow.connect(gen_inputs, "atlas_name", outputnode, "atlas_name")

@@ -23,7 +23,10 @@ def test_setup_forward_model():
     setup_forward_model = SetupForwardModel()
     setup_forward_model.inputs.fname = "sample"
     setup_forward_model.inputs.subject = "sample"
-    setup_forward_model.inputs.subjects_dir = os.path.join(testing_dir, "subjects")
+    bem_dir = os.path.join(testing_dir, "subjects", "sample", "bem")
+    setup_forward_model.inputs.inner_skull = os.path.join(bem_dir, "inner_skull.surf")
+    setup_forward_model.inputs.outer_skull = os.path.join(bem_dir, "outer_skull.surf")
+    setup_forward_model.inputs.outer_skin = os.path.join(bem_dir, "outer_skin.surf")
     setup_forward_model.inputs.ico = 3
     setup_forward_model.inputs.conductivity = (0.3, 0.006, 0.3)
     setup_forward_model.inputs.verbose = True

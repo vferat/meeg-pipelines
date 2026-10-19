@@ -53,6 +53,12 @@ def add_parser(subparsers) -> None:
         help="Positions to use for sources. A grid will be constructed with the spacing given by pos in mm, generating a volume source space"
     )
     subparser.add_argument(
+        "--templateflow-dir",
+        type=os.path.abspath,
+        help="Persistent folder used as TemplateFlow cache. "
+             "Default is $TEMPLATEFLOW_HOME or ~/.cache/templateflow.",
+    )
+    subparser.add_argument(
         "--fs-license-file",
         type=os.path.abspath,
         help="Path to FreeSurfer license key file.",
@@ -118,10 +124,21 @@ def run(args, unknown_args) -> None:
     main_args.extend(["--work-dir", "/scratch"])
 
     # templateflow_dir
-    templateflow_dir = tempfile.mkdtemp(prefix="meegpype_workdir_")
+    # Use a persistent folder so templates are not re-downloaded at each run
+    # (new files would invalidate the nipype cache of nodes using them).
+    templateflow_dir = args.templateflow_dir
+    if templateflow_dir is None:
+        templateflow_dir = os.getenv(
+            "TEMPLATEFLOW_HOME",
+            os.path.join(os.path.expanduser("~"), ".cache", "templateflow"),
+        )
+    os.makedirs(templateflow_dir, exist_ok=True)
     if engine == "apptainer":
         command.extend(["-B", f"{templateflow_dir}:/opt/templateflow"])
         command.extend(["--env", "TEMPLATEFLOW_HOME=/opt/templateflow"])
+    else:
+        command.extend(["-v", f"{templateflow_dir}:/opt/templateflow"])
+        command.extend(["-e", "TEMPLATEFLOW_HOME=/opt/templateflow"])
 
     # fs-license-file
     fs_license_file = args.fs_license_file

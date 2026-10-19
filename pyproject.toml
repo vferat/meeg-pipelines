@@ -26,7 +26,7 @@ dependencies = [
   'mne[full]==1.12.1',
   'mne-bids',
   'h5io',
-  'smriprep',
+  'smriprep==0.19.4',
 ]
 description = 'MEG and EEG pipelines.'
 keywords = [
