@@ -1,0 +1,36 @@
+digraph structs {
+node [shape=record];
+refined_bem_workflowinputnode [label="{IN}|{ inputnode | utility |  }|{OUT|<outsubjectid> subject_id|<outsubjectsdir> subjects_dir}"];
+refined_bem_workflowwatershed [label="{IN|<insubject> subject|<insubjectsdir> subjects_dir}|{ watershed | mne |  }|{OUT|<outsubject> subject|<outsubjectsdir> subjects_dir|<outwatershedouterskin> watershed_outer_skin|<outwatershedouterskull> watershed_outer_skull}"];
+refined_bem_workflowfs_source [label="{IN|<insubjectid> subject_id|<insubjectsdir> subjects_dir}|{ fs_source | io |  }|{OUT|<outbrainmask> brainmask}"];
+refined_bem_workflowmri_binarize [label="{IN|<ininputvolume> input_volume}|{ mri_binarize | freesurfer |  }|{OUT|<outoutputvolume> output_volume}"];
+refined_bem_workflowmri_mc [label="{IN|<ininputvolume> input_volume}|{ mri_mc | freesurfer |  }|{OUT|<outoutputsurface> output_surface}"];
+refined_bem_workflowmris_smooth [label="{IN|<ininputsurface> input_surface}|{ mris_smooth | freesurfer |  }|{OUT|<outoutputsurface> output_surface}"];
+refined_bem_workflowdecimate_surface [label="{IN|<ininputsurface> input_surface}|{ decimate_surface | mne |  }|{OUT|<outoutputsurface> output_surface}"];
+refined_bem_workflowmris_expand_brain [label="{IN|<ininfile> in_file}|{ mris_expand_brain | freesurfer |  }|{OUT|<outoutfile> out_file}"];
+refined_bem_workflowmris_expand_inner_skull [label="{IN|<ininfile> in_file}|{ mris_expand_inner_skull | freesurfer |  }|{OUT|<outoutfile> out_file}"];
+refined_bem_workflowinstall_surfaces [label="{IN|<inbrain> brain|<ininnerskull> inner_skull|<inouterskin> outer_skin|<inouterskull> outer_skull|<insubject> subject|<insubjectsdir> subjects_dir}|{ install_surfaces | utility |  }|{OUT|<outbrainsurf> brain_surf|<outinnerskullsurf> inner_skull_surf|<outouterskinsurf> outer_skin_surf|<outouterskullsurf> outer_skull_surf|<outsubject> subject|<outsubjectsdir> subjects_dir}"];
+refined_bem_workflowoutputnode [label="{IN|<inbrainsurf> brain_surf|<ininnerskullsurf> inner_skull_surf|<inouterskinsurf> outer_skin_surf|<inouterskullsurf> outer_skull_surf|<insubjectid> subject_id|<insubjectsdir> subjects_dir}|{ outputnode | utility |  }|{OUT}"];
+refined_bem_workflowdecimate_surface:outoutputsurface:e -> refined_bem_workflowmris_expand_brain:ininfile:w;
+refined_bem_workflowfs_source:outbrainmask:e -> refined_bem_workflowmri_binarize:ininputvolume:w;
+refined_bem_workflowinputnode:outsubjectid:e -> refined_bem_workflowfs_source:insubjectid:w;
+refined_bem_workflowinputnode:outsubjectid:e -> refined_bem_workflowwatershed:insubject:w;
+refined_bem_workflowinputnode:outsubjectsdir:e -> refined_bem_workflowfs_source:insubjectsdir:w;
+refined_bem_workflowinputnode:outsubjectsdir:e -> refined_bem_workflowwatershed:insubjectsdir:w;
+refined_bem_workflowinstall_surfaces:outbrainsurf:e -> refined_bem_workflowoutputnode:inbrainsurf:w;
+refined_bem_workflowinstall_surfaces:outinnerskullsurf:e -> refined_bem_workflowoutputnode:ininnerskullsurf:w;
+refined_bem_workflowinstall_surfaces:outouterskinsurf:e -> refined_bem_workflowoutputnode:inouterskinsurf:w;
+refined_bem_workflowinstall_surfaces:outouterskullsurf:e -> refined_bem_workflowoutputnode:inouterskullsurf:w;
+refined_bem_workflowinstall_surfaces:outsubject:e -> refined_bem_workflowoutputnode:insubjectid:w;
+refined_bem_workflowinstall_surfaces:outsubjectsdir:e -> refined_bem_workflowoutputnode:insubjectsdir:w;
+refined_bem_workflowmri_binarize:outoutputvolume:e -> refined_bem_workflowmri_mc:ininputvolume:w;
+refined_bem_workflowmri_mc:outoutputsurface:e -> refined_bem_workflowmris_smooth:ininputsurface:w;
+refined_bem_workflowmris_expand_brain:outoutfile:e -> refined_bem_workflowinstall_surfaces:inbrain:w;
+refined_bem_workflowmris_expand_brain:outoutfile:e -> refined_bem_workflowmris_expand_inner_skull:ininfile:w;
+refined_bem_workflowmris_expand_inner_skull:outoutfile:e -> refined_bem_workflowinstall_surfaces:ininnerskull:w;
+refined_bem_workflowmris_smooth:outoutputsurface:e -> refined_bem_workflowdecimate_surface:ininputsurface:w;
+refined_bem_workflowwatershed:outsubject:e -> refined_bem_workflowinstall_surfaces:insubject:w;
+refined_bem_workflowwatershed:outsubjectsdir:e -> refined_bem_workflowinstall_surfaces:insubjectsdir:w;
+refined_bem_workflowwatershed:outwatershedouterskin:e -> refined_bem_workflowinstall_surfaces:inouterskin:w;
+refined_bem_workflowwatershed:outwatershedouterskull:e -> refined_bem_workflowinstall_surfaces:inouterskull:w;
+}

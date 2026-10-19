@@ -446,6 +446,7 @@
                                 <span class="p">[</span><span class="o">--</span><span class="n">participant</span><span class="o">-</span><span class="n">label</span> <span class="n">PARTICIPANT_LABEL</span> <span class="p">[</span><span class="n">PARTICIPANT_LABEL</span> <span class="o">...</span><span class="p">]]</span>
                                 <span class="p">[</span><span class="o">-</span><span class="n">w</span> <span class="n">WORK_DIR</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">bem</span><span class="o">-</span><span class="n">method</span> <span class="n">BEM_METHOD</span><span class="p">]</span>
                                 <span class="p">[</span><span class="o">--</span><span class="n">surface</span><span class="o">-</span><span class="n">src</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">volume</span><span class="o">-</span><span class="n">src</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">pos</span> <span class="n">POS</span><span class="p">]</span>
+                                <span class="p">[</span><span class="o">--</span><span class="n">templateflow</span><span class="o">-</span><span class="nb">dir</span> <span class="n">TEMPLATEFLOW_DIR</span><span class="p">]</span>
                                 <span class="p">[</span><span class="o">--</span><span class="n">fs</span><span class="o">-</span><span class="n">license</span><span class="o">-</span><span class="n">file</span> <span class="n">FS_LICENSE_FILE</span><span class="p">]</span>
                                 <span class="p">[</span><span class="o">--</span><span class="n">nprocs</span> <span class="n">NPROCS</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">engine</span> <span class="n">ENGINE</span><span class="p">]</span>
                                 <span class="n">bids_dir</span> <span class="n">output_dir</span> <span class="n">analysis_level</span>
@@ -490,6 +491,9 @@ Processing stage to be run, only “participant” in the case of meegpype-forwa
 <dt><kbd>--pos, --position</kbd></dt>
 <dd><p>Positions to use for sources. A grid will be constructed with the spacing given by pos in mm, generating a volume source space</p>
 <p>Default: <code class="docutils literal notranslate"><span class="pre">5</span></code></p>
+</dd>
+<dt><kbd>--templateflow-dir</kbd></dt>
+<dd><p>Persistent folder used as TemplateFlow cache. Default is $TEMPLATEFLOW_HOME or ~/.cache/templateflow.</p>
 </dd>
 <dt><kbd>--fs-license-file</kbd></dt>
 <dd><p>Path to FreeSurfer license key file.</p>

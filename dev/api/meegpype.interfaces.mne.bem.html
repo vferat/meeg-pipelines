@@ -384,6 +384,10 @@
 <li class="toctree-l2"><a class="reference internal" href="meegpype.interfaces.connectome_wb.label_resample.html">meegpype.interfaces.connectome_wb.label_resample module</a></li>
 </ul>
 </details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="meegpype.interfaces.custom.html">Custom</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="meegpype.interfaces.custom.fit_surface.html">meegpype.interfaces.custom.fit_surface module</a></li>
+</ul>
+</details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="meegpype.interfaces.freesurfer.html">FreeSurfer</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="meegpype.interfaces.freesurfer.aparc2aseg.html">meegpype.interfaces.freesurfer.aparc2aseg module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="meegpype.interfaces.freesurfer.mri_binarize.html">meegpype.interfaces.freesurfer.mri_binarize module</a></li>
@@ -481,7 +485,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="meegpype.interfaces.mne.bem.MakeWatershedBEM">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">meegpype.interfaces.mne.bem.</span></span><span class="sig-name descname"><span class="pre">MakeWatershedBEM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">from_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_monitor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_exception</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meegpype.interfaces.mne.bem.MakeWatershedBEM" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://nipype.readthedocs.io/en/latest/api/generated/nipype.interfaces.base.core.html#nipype.interfaces.base.core.BaseInterface" title="(in nipype v1.12.1.dev10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseInterface</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://nipype.readthedocs.io/en/latest/api/generated/nipype.interfaces.base.core.html#nipype.interfaces.base.core.BaseInterface" title="(in nipype v1.12.1.dev11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseInterface</span></code></a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Mandatory Inputs<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -511,6 +515,10 @@
 <li><p><strong>outer_skull</strong> (<em>a string or os.PathLike object referring to an existing file</em>)</p></li>
 <li><p><strong>subject</strong> (<em>a string</em>) – Subject name.</p></li>
 <li><p><strong>subjects_dir</strong> (<em>a pathlike object or string representing a directory</em>) – Subjects directory.</p></li>
+<li><p><strong>watershed_brain_surf</strong> (<em>a string or os.PathLike object referring to an existing file</em>) – Original watershed brain surface.</p></li>
+<li><p><strong>watershed_inner_skull</strong> (<em>a string or os.PathLike object referring to an existing file</em>) – Original watershed inner skull surface.</p></li>
+<li><p><strong>watershed_outer_skin</strong> (<em>a string or os.PathLike object referring to an existing file</em>) – Original watershed outer skin surface.</p></li>
+<li><p><strong>watershed_outer_skull</strong> (<em>a string or os.PathLike object referring to an existing file</em>) – Original watershed outer skull surface.</p></li>
 </ul>
 </dd>
 </dl>
@@ -519,19 +527,21 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="meegpype.interfaces.mne.bem.SetupForwardModel">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">meegpype.interfaces.mne.bem.</span></span><span class="sig-name descname"><span class="pre">SetupForwardModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">from_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_monitor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_exception</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meegpype.interfaces.mne.bem.SetupForwardModel" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://nipype.readthedocs.io/en/latest/api/generated/nipype.interfaces.base.core.html#nipype.interfaces.base.core.BaseInterface" title="(in nipype v1.12.1.dev10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseInterface</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://nipype.readthedocs.io/en/latest/api/generated/nipype.interfaces.base.core.html#nipype.interfaces.base.core.BaseInterface" title="(in nipype v1.12.1.dev11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseInterface</span></code></a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Mandatory Inputs<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>fname</strong> (<em>a string or os.PathLike object</em>) – Output base name. Will be prepend by -bem.fif and -sol.fif.</p></li>
+<li><p><strong>inner_skull</strong> (<em>a pathlike object or string representing an existing file</em>) – Inner skull surface (FreeSurfer format).</p></li>
 <li><p><strong>subject</strong> (<em>a string</em>) – Subject name (required).</p></li>
-<li><p><strong>subjects_dir</strong> (<em>a pathlike object or string representing an existing directory</em>) – Subjects directory.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Optional Inputs<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>conductivity</strong> (<em>an array</em>) – Defines the brain compartment conductivity. The default value is 0.3 S/m.</p></li>
 <li><p><strong>ico</strong> (<em>an integer</em>) – The surface ico downsampling to use, e.g. 5=20484, 4=5120, 3=1280. If None, no subsampling is applied.</p></li>
+<li><p><strong>outer_skin</strong> (<em>a pathlike object or string representing an existing file</em>) – Outer skin surface (FreeSurfer format). Required for a 3-layer model.</p></li>
+<li><p><strong>outer_skull</strong> (<em>a pathlike object or string representing an existing file</em>) – Outer skull surface (FreeSurfer format). Required for a 3-layer model.</p></li>
 <li><p><strong>overwrite</strong> (<em>a boolean</em>) – Overwrite existing files.</p></li>
 <li><p><strong>verbose</strong> (<em>a boolean</em>) – Enable verbose mode (printing of log messages).</p></li>
 </ul>
