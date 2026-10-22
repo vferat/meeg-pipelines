@@ -107,7 +107,7 @@ class MakeReport(BaseInterface):
                     fig, axes = plt.subplots(3, 2)
                     mne.viz.plot_head_positions(
                         hp,
-                        info=info,
+                        info=None,
                         destination=info["dev_head_t"],
                         axes=axes,
                     )

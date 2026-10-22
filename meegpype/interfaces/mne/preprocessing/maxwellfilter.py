@@ -92,15 +92,6 @@ class ApplyMaxwellFilter(BaseInterface):
         h_freq = 40.0
 
         extended_proj = ()
-        if emptyroom:
-            emptyroom = mne.io.read_raw(emptyroom, allow_maxshield="yes")
-            extended_proj = mne.compute_proj_raw(
-                emptyroom,
-                n_grad=3,
-                n_mag=3,
-                meg="combined",
-            )
-
         noisy_chs, flat_chs = mne.preprocessing.find_bad_channels_maxwell(
             raw,
             limit=7.0,
@@ -124,9 +115,20 @@ class ApplyMaxwellFilter(BaseInterface):
             verbose=None,
         )
 
+        # Update extended proj
+        if emptyroom:
+            emptyroom = mne.io.read_raw(emptyroom, allow_maxshield="yes")
+            extended_proj = mne.compute_proj_raw(
+                emptyroom,
+                n_grad=3,
+                n_mag=3,
+                meg="combined",
+            )
+
 
         all_bads = np.unique(raw.info["bads"] + noisy_chs + flat_chs).tolist()
         raw.info["bads"] = all_bads
+        emptyroom.info["bads"] = all_bads
     
         st_correlation = 0.98
         maxwell_filter_args = {
