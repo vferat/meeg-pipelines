@@ -1,0 +1,2 @@
+from meegpype.workflows.anat.fs_individual_atlas import generate_fs_individual_labelling_workflow
+wf = generate_fs_individual_labelling_workflow()

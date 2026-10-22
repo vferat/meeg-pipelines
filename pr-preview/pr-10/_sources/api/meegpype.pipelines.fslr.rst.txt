@@ -1,0 +1,7 @@
+meegpype.pipelines.fslr module
+==============================
+
+.. automodule:: meegpype.pipelines.fslr
+   :members:
+   :show-inheritance:
+   :undoc-members:

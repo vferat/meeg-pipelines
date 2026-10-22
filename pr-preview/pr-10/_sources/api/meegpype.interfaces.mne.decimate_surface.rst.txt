@@ -1,0 +1,7 @@
+meegpype.interfaces.mne.decimate\_surface module
+================================================
+
+.. automodule:: meegpype.interfaces.mne.decimate_surface
+   :members:
+   :show-inheritance:
+   :undoc-members:

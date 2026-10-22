@@ -1,0 +1,25 @@
+strict digraph {
+"install_surfaces (utility)";
+"outputnode (utility)";
+"inputnode (utility)";
+"watershed (mne)";
+"fs_source (io)";
+"mri_binarize (freesurfer)";
+"mri_mc (freesurfer)";
+"mris_smooth (freesurfer)";
+"decimate_surface (mne)";
+"mris_expand_brain (freesurfer)";
+"mris_expand_inner_skull (freesurfer)";
+"install_surfaces (utility)" -> "outputnode (utility)";
+"inputnode (utility)" -> "watershed (mne)";
+"inputnode (utility)" -> "fs_source (io)";
+"watershed (mne)" -> "install_surfaces (utility)";
+"fs_source (io)" -> "mri_binarize (freesurfer)";
+"mri_binarize (freesurfer)" -> "mri_mc (freesurfer)";
+"mri_mc (freesurfer)" -> "mris_smooth (freesurfer)";
+"mris_smooth (freesurfer)" -> "decimate_surface (mne)";
+"decimate_surface (mne)" -> "mris_expand_brain (freesurfer)";
+"mris_expand_brain (freesurfer)" -> "mris_expand_inner_skull (freesurfer)";
+"mris_expand_brain (freesurfer)" -> "install_surfaces (utility)";
+"mris_expand_inner_skull (freesurfer)" -> "install_surfaces (utility)";
+}

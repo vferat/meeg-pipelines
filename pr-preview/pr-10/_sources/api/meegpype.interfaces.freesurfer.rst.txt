@@ -1,0 +1,19 @@
+FreeSurfer
+==========
+
+.. automodule:: meegpype.interfaces.freesurfer
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   meegpype.interfaces.freesurfer.aparc2aseg
+   meegpype.interfaces.freesurfer.mri_binarize
+   meegpype.interfaces.freesurfer.mri_mc
+   meegpype.interfaces.freesurfer.mri_watershed
+   meegpype.interfaces.freesurfer.mris_smooth

@@ -1,0 +1,18 @@
+meegpype.interfaces.mne.preprocessing package
+=============================================
+
+.. automodule:: meegpype.interfaces.mne.preprocessing
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   meegpype.interfaces.mne.preprocessing.destination
+   meegpype.interfaces.mne.preprocessing.filter_chpi
+   meegpype.interfaces.mne.preprocessing.headposition
+   meegpype.interfaces.mne.preprocessing.maxwellfilter

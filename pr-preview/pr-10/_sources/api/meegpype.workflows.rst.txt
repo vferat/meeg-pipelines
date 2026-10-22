@@ -1,0 +1,24 @@
+meegpype.workflows package
+==========================
+
+.. automodule:: meegpype.workflows
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 1
+
+   meegpype.workflows.anat
+   meegpype.workflows.meg
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   meegpype.workflows.forward

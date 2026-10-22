@@ -1,0 +1,7 @@
+meegpype.interfaces.mne.headsurf module
+=======================================
+
+.. automodule:: meegpype.interfaces.mne.headsurf
+   :members:
+   :show-inheritance:
+   :undoc-members:

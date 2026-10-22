@@ -1,0 +1,7 @@
+meegpype.workflows.anat.fiducials module
+========================================
+
+.. automodule:: meegpype.workflows.anat.fiducials
+   :members:
+   :show-inheritance:
+   :undoc-members:

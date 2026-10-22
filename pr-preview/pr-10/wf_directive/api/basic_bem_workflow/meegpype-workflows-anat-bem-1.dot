@@ -1,0 +1,9 @@
+strict digraph {
+"install_surfaces (utility)";
+"outputnode (utility)";
+"inputnode (utility)";
+"watershed (mne)";
+"install_surfaces (utility)" -> "outputnode (utility)";
+"inputnode (utility)" -> "watershed (mne)";
+"watershed (mne)" -> "install_surfaces (utility)";
+}
