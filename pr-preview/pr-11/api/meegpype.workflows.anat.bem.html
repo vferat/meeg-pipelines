@@ -502,7 +502,7 @@ installed surfaces: <code class="docutils literal notranslate"><span class="pre"
 
 <dl class="py function">
 <dt class="sig sig-object py" id="meegpype.workflows.anat.bem.generate_bem_workflow">
-<span class="sig-prename descclassname"><span class="pre">meegpype.workflows.anat.bem.</span></span><span class="sig-name descname"><span class="pre">generate_bem_workflow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subjects_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'freesurfer_bem_surfaces'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'basic'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meegpype.workflows.anat.bem.generate_bem_workflow" title="Link to this definition">🔗</a></dt>
+<span class="sig-prename descclassname"><span class="pre">meegpype.workflows.anat.bem.</span></span><span class="sig-name descname"><span class="pre">generate_bem_workflow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subjects_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'freesurfer_bem_surfaces'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'basic'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inner_skull_distance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meegpype.workflows.anat.bem.generate_bem_workflow" title="Link to this definition">🔗</a></dt>
 <dd><p>Build a BEM workflow.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -513,6 +513,9 @@ installed surfaces: <code class="docutils literal notranslate"><span class="pre"
 <li><p><strong>name</strong> (<em>str</em>) – Name of the workflow.</p></li>
 <li><p><strong>method</strong> (<code class="docutils literal notranslate"><span class="pre">&quot;basic&quot;</span></code> | <code class="docutils literal notranslate"><span class="pre">&quot;refined&quot;</span></code>) – The method used to compute the BEM surfaces, see
 <a class="reference internal" href="#meegpype.workflows.anat.bem.generate_basic_bem_workflow" title="meegpype.workflows.anat.bem.generate_basic_bem_workflow"><code class="xref py py-func docutils literal notranslate"><span class="pre">generate_basic_bem_workflow()</span></code></a> and <a class="reference internal" href="#meegpype.workflows.anat.bem.generate_refined_bem_workflow" title="meegpype.workflows.anat.bem.generate_refined_bem_workflow"><code class="xref py py-func docutils literal notranslate"><span class="pre">generate_refined_bem_workflow()</span></code></a>.</p></li>
+<li><p><strong>inner_skull_distance</strong> (<em>float | None</em>) – Distance (in mm) between the brain and the inner skull surfaces, only used by
+the <code class="docutils literal notranslate"><span class="pre">&quot;refined&quot;</span></code> method. If None, the default of
+<a class="reference internal" href="#meegpype.workflows.anat.bem.generate_refined_bem_workflow" title="meegpype.workflows.anat.bem.generate_refined_bem_workflow"><code class="xref py py-func docutils literal notranslate"><span class="pre">generate_refined_bem_workflow()</span></code></a> is used.</p></li>
 </ul>
 </dd>
 </dl>
@@ -520,7 +523,7 @@ installed surfaces: <code class="docutils literal notranslate"><span class="pre"
 
 <dl class="py function">
 <dt class="sig sig-object py" id="meegpype.workflows.anat.bem.generate_refined_bem_workflow">
-<span class="sig-prename descclassname"><span class="pre">meegpype.workflows.anat.bem.</span></span><span class="sig-name descname"><span class="pre">generate_refined_bem_workflow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subjects_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'refined_bem_workflow'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meegpype.workflows.anat.bem.generate_refined_bem_workflow" title="Link to this definition">🔗</a></dt>
+<span class="sig-prename descclassname"><span class="pre">meegpype.workflows.anat.bem.</span></span><span class="sig-name descname"><span class="pre">generate_refined_bem_workflow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subjects_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inner_skull_distance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'refined_bem_workflow'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meegpype.workflows.anat.bem.generate_refined_bem_workflow" title="Link to this definition">🔗</a></dt>
 <dd><p>Build the refined BEM workflow, using the FreeSurfer brain mask.</p>
 <p>The brain and inner skull surfaces are computed from the FreeSurfer
 <code class="docutils literal notranslate"><span class="pre">brainmask.mgz</span></code>. In the forward pipeline, it holds the ANTs brain extraction
@@ -531,7 +534,8 @@ includes the CSF surrounding the brain:</p>
 <li><p>a surface is extracted with marching cubes (<code class="docutils literal notranslate"><span class="pre">mri_mc</span></code>), smoothed and
 decimated to 5120 triangles;</p></li>
 <li><p>the brain surface is obtained by expanding it by 1 mm, and the inner skull
-surface by expanding the brain surface by a further 2 mm.</p></li>
+surface by expanding the brain surface by a further <code class="docutils literal notranslate"><span class="pre">inner_skull_distance</span></code>
+mm (2 mm by default).</p></li>
 </ol>
 <p>The outer skull and outer skin surfaces are computed with
 <a class="reference external" href="https://mne.tools/stable/generated/mne.bem.make_watershed_bem.html#mne.bem.make_watershed_bem" title="(in MNE v1.13)"><code class="xref py py-func docutils literal notranslate"><span class="pre">mne.bem.make_watershed_bem()</span></code></a>. All surfaces are installed in
@@ -549,6 +553,7 @@ surface by expanding the brain surface by a further 2 mm.</p></li>
 <li><p><strong>subject_id</strong> (<em>str, optional</em>) – FreeSurfer subject ID. Can also be connected to <code class="docutils literal notranslate"><span class="pre">inputnode.subject_id</span></code>.</p></li>
 <li><p><strong>subjects_dir</strong> (<em>str, optional</em>) – FreeSurfer subjects directory. Can also be connected to
 <code class="docutils literal notranslate"><span class="pre">inputnode.subjects_dir</span></code>.</p></li>
+<li><p><strong>inner_skull_distance</strong> (<em>float</em>) – Distance (in mm) between the brain and the inner skull surfaces.</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – Name of the workflow.</p></li>
 </ul>
 </dd>
