@@ -274,7 +274,7 @@ def ensure_subject(subject: Any, subjects_dir: Optional[Any] = None) -> str:
             subject = "sub-" + subject
         return subject
 
-    subjects_dir = ensure_path(subjects_dir, must_exist=True)
+    subjects_dir = Path(ensure_path(subjects_dir, must_exist=True))
     if subject.startswith("sub-"):
         candidates = [subject, subject[len("sub-"):]]
     else:
