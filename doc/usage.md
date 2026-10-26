@@ -4,12 +4,9 @@
 
 `meegpype-wrapper` runs the meegpype pipelines inside the Docker / Apptainer image.
 
-### forward
+```{toctree}
+:maxdepth: 1
 
-
-```{argparse}
-:module: meegpype_wrapper.entrypoint
-:func: get_parser
-:prog: meegpype-wrapper
-:path: forward
+usage/forward
+usage/bem
 ```
