@@ -1,0 +1,14 @@
+strict digraph {
+"inputnode (utility)";
+"apply_transform (mne)";
+"coreg (freesurfer)";
+"fs_source (io)";
+"outputnode (utility)";
+"inputnode (utility)" -> "apply_transform (mne)";
+"inputnode (utility)" -> "coreg (freesurfer)";
+"inputnode (utility)" -> "fs_source (io)";
+"apply_transform (mne)" -> "outputnode (utility)";
+"coreg (freesurfer)" -> "apply_transform (mne)";
+"fs_source (io)" -> "coreg (freesurfer)";
+"fs_source (io)" -> "apply_transform (mne)";
+}

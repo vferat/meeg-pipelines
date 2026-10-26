@@ -1,0 +1,7 @@
+meegpype.pipelines.bem module
+=============================
+
+.. automodule:: meegpype.pipelines.bem
+   :members:
+   :show-inheritance:
+   :undoc-members:

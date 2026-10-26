@@ -1,0 +1,7 @@
+meegpype.interfaces.mne.preprocessing.maxwellfilter module
+==========================================================
+
+.. automodule:: meegpype.interfaces.mne.preprocessing.maxwellfilter
+   :members:
+   :show-inheritance:
+   :undoc-members:

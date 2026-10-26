@@ -1,0 +1,7 @@
+meegpype.interfaces.mne.preprocessing.headposition module
+=========================================================
+
+.. automodule:: meegpype.interfaces.mne.preprocessing.headposition
+   :members:
+   :show-inheritance:
+   :undoc-members:
