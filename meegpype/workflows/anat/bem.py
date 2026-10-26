@@ -152,6 +152,7 @@ def generate_basic_bem_workflow(
 def generate_refined_bem_workflow(
         subject_id=None,
         subjects_dir=None,
+        inner_skull_distance=2,
         name="refined_bem_workflow"):
     """Build the refined BEM workflow, using the FreeSurfer brain mask.
 
@@ -164,7 +165,8 @@ def generate_refined_bem_workflow(
     2. a surface is extracted with marching cubes (``mri_mc``), smoothed and
        decimated to 5120 triangles;
     3. the brain surface is obtained by expanding it by 1 mm, and the inner skull
-       surface by expanding the brain surface by a further 2 mm.
+       surface by expanding the brain surface by a further ``inner_skull_distance``
+       mm (2 mm by default).
 
     The outer skull and outer skin surfaces are computed with
     :func:`mne.bem.make_watershed_bem`. All surfaces are installed in
@@ -185,6 +187,8 @@ def generate_refined_bem_workflow(
     subjects_dir : str, optional
         FreeSurfer subjects directory. Can also be connected to
         ``inputnode.subjects_dir``.
+    inner_skull_distance : float
+        Distance (in mm) between the brain and the inner skull surfaces.
     name : str
         Name of the workflow.
 
@@ -224,7 +228,7 @@ def generate_refined_bem_workflow(
     mris_expand_brain.inputs.out_name = 'brain.surf'
 
     mris_expand_inner_skull = Node(MRIsExpand(), name='mris_expand_inner_skull')
-    mris_expand_inner_skull.inputs.distance = 2
+    mris_expand_inner_skull.inputs.distance = inner_skull_distance
     mris_expand_inner_skull.inputs.out_name = 'inner_skull.surf'
     mris_expand_inner_skull.inputs.smooth_averages = 3
 
@@ -259,7 +263,8 @@ def generate_bem_workflow(
         subject_id=None,
         subjects_dir=None,
         name="freesurfer_bem_surfaces",
-        method="basic"):
+        method="basic",
+        inner_skull_distance=None):
     """Build a BEM workflow.
 
     Parameters
@@ -274,10 +279,19 @@ def generate_bem_workflow(
     method : ``"basic"`` | ``"refined"``
         The method used to compute the BEM surfaces, see
         :func:`generate_basic_bem_workflow` and :func:`generate_refined_bem_workflow`.
+    inner_skull_distance : float | None
+        Distance (in mm) between the brain and the inner skull surfaces, only used by
+        the ``"refined"`` method. If None, the default of
+        :func:`generate_refined_bem_workflow` is used.
     """
     if method == "basic":
+        if inner_skull_distance is not None:
+            raise ValueError("inner_skull_distance is only used by the 'refined' method.")
         return generate_basic_bem_workflow(subject_id=subject_id, subjects_dir=subjects_dir, name=name)
     elif method == "refined":
-        return generate_refined_bem_workflow(subject_id=subject_id, subjects_dir=subjects_dir, name=name)
+        kwargs = {}
+        if inner_skull_distance is not None:
+            kwargs["inner_skull_distance"] = inner_skull_distance
+        return generate_refined_bem_workflow(subject_id=subject_id, subjects_dir=subjects_dir, name=name, **kwargs)
     else:
         raise ValueError(f"Unknown method: {method}")

@@ -12,10 +12,13 @@ set_log_level('DEBUG')
 BEM_METHODS = ("basic", "refined")
 
 
-def run_bem_pipeline(subject, subjects_dir, method="basic", work_dir=None, n_procs=None):
+def run_bem_pipeline(subject, subjects_dir, method="basic", inner_skull_distance=None,
+                     work_dir=None, n_procs=None):
     """Compute the BEM surfaces of a FreeSurfer subject.
 
-    The surfaces are written to ``subjects_dir/subject/bem``.
+    The surfaces are written to ``subjects_dir/subject/bem``. ``inner_skull_distance``
+    (in mm) is only used by the ``"refined"`` method, see
+    :func:`~meegpype.workflows.anat.bem.generate_bem_workflow`.
     """
     # Validate inputs
     check_value(method, BEM_METHODS, "method")
@@ -41,7 +44,8 @@ def run_bem_pipeline(subject, subjects_dir, method="basic", work_dir=None, n_pro
     wf = generate_bem_workflow(subject_id=subject,
                                subjects_dir=str(subjects_dir),
                                name='bem_workflow',
-                               method=method)
+                               method=method,
+                               inner_skull_distance=inner_skull_distance)
     wf.base_dir = str(work_dir) if work_dir is not None else None
 
     # Run

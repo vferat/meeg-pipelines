@@ -24,6 +24,12 @@ def add_parser(subparsers) -> None:
         default="basic",
     )
     subparser.add_argument(
+        "--inner-skull-distance",
+        type=float,
+        help="Distance (in mm) between the brain and the inner skull surfaces. "
+             "Only used by the 'refined' method. Default is 2.",
+    )
+    subparser.add_argument(
         "-w", "--work-dir",
         type=os.path.abspath,
         help="Path where intermediate results should be stored.",
@@ -100,6 +106,10 @@ def run(args, unknown_args) -> None:
     # bem-method
     if args.bem_method:
         unknown_args.extend(["--bem-method", args.bem_method])
+
+    # inner-skull-distance
+    if args.inner_skull_distance is not None:
+        unknown_args.extend(["--inner-skull-distance", str(args.inner_skull_distance)])
 
     # nprocs
     if args.nprocs:

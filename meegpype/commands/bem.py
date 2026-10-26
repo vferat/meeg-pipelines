@@ -24,6 +24,12 @@ def run() -> None:
         help="Method to use for BEM surface generation. Default is 'basic'.",
     )
     parser.add_argument(
+        "--inner-skull-distance",
+        type=float,
+        help="Distance (in mm) between the brain and the inner skull surfaces. "
+             "Only used by the 'refined' method. Default is 2.",
+    )
+    parser.add_argument(
         "-w", "--work-dir",
         help="Path where intermediate results should be stored.",
     )
@@ -37,5 +43,6 @@ def run() -> None:
     run_bem_pipeline(subject=args.subject,
                      subjects_dir=args.subjects_dir,
                      method=args.bem_method,
+                     inner_skull_distance=args.inner_skull_distance,
                      work_dir=args.work_dir,
                      n_procs=args.nprocs)
