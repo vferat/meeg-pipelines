@@ -245,9 +245,44 @@ def ensure_path(item: Any, must_exist: bool) -> Path:
         raise FileNotFoundError(f"The provided path '{str(item)}' does not exist.")
     return item
 
-def ensure_subject(subject: Any) -> str:
-    """Ensure a variable is a valid subject ID string."""
+def ensure_subject(subject: Any, subjects_dir: Optional[Any] = None) -> str:
+    """Ensure a variable is a valid subject ID string.
+
+    Parameters
+    ----------
+    subject : str
+        Subject ID, with or without the ``sub-`` prefix.
+    subjects_dir : path-like | None
+        FreeSurfer subjects directory. If provided, both the ``sub-<ID>`` and the
+        ``<ID>`` folders are looked for in it and the name of the existing one is
+        returned (the name as provided is preferred if both exist). If None, the
+        ``sub-`` prefix is added when missing.
+
+    Returns
+    -------
+    subject : str
+        The subject ID.
+
+    Raises
+    ------
+    FileNotFoundError
+        If ``subjects_dir`` is provided and neither folder exists in it.
+    """
     check_type(subject, (str,), item_name="subject")
-    if not subject.startswith("sub-"):
-        subject = "sub-" + subject
-    return subject
+    if subjects_dir is None:
+        if not subject.startswith("sub-"):
+            subject = "sub-" + subject
+        return subject
+
+    subjects_dir = ensure_path(subjects_dir, must_exist=True)
+    if subject.startswith("sub-"):
+        candidates = [subject, subject[len("sub-"):]]
+    else:
+        candidates = [subject, "sub-" + subject]
+    for candidate in candidates:
+        if (subjects_dir / candidate).is_dir():
+            return candidate
+    raise FileNotFoundError(
+        f"Subject '{subject}' not found in subjects directory '{subjects_dir}'. "
+        f"Looked for the folders {' and '.join(repr(c) for c in candidates)}."
+    )

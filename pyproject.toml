@@ -98,6 +98,7 @@ test = [
 [project.scripts]
 meegpype-sys_info = 'meegpype.commands.sys_info:run'
 meegpype-forward = 'meegpype.commands.forward:run'
+meegpype-bem = 'meegpype.commands.bem:run'
 meegpype-fslr =  'meegpype.commands.fslr:run'
 meegpype-fslabelling = 'meegpype.commands.fslabelling:run'
 

@@ -1,6 +1,8 @@
 import argparse
 from .forward import add_parser as forward_add_parser
 from .forward import run as run_forward
+from .bem import add_parser as bem_add_parser
+from .bem import run as run_bem
 from .fslr import add_parser as fslr_add_parser
 from .fslr import run as run_fslr
 from .fslabelling import add_parser as fslabelling_add_parser
@@ -13,6 +15,7 @@ def get_parser() -> argparse.ArgumentParser:
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
     forward_add_parser(subparsers)
+    bem_add_parser(subparsers)
     fslr_add_parser(subparsers)
     fslabelling_add_parser(subparsers)
     return parser
@@ -25,6 +28,8 @@ def run() -> None:
 
     if args.command == "forward":
         run_forward(args, unknown_args)
+    elif args.command == "bem":
+        run_bem(args, unknown_args)
     elif args.command == "fslr":
         run_fslr(args, unknown_args)
     elif args.command == "fslabelling":
