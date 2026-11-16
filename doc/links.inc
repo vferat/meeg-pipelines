@@ -25,3 +25,31 @@
 .. _mne stable: https://mne.tools/stable/index.html
 .. _mne bids: https://mne.tools/mne-bids/stable/index.html
 
+.. _project issues: https://github.com/vferat/meeg-pipelines/issues
+
+
+.. neuroimaging tools
+
+.. _BIDS: https://bids.neuroimaging.io/
+.. _BIDS validator: https://bids-standard.github.io/bids-validator/
+.. _PyBIDS: https://bids-standard.github.io/pybids/
+.. _FreeSurfer: https://surfer.nmr.mgh.harvard.edu/
+.. _FreeSurfer license: https://surfer.nmr.mgh.harvard.edu/registration.html
+.. _sMRIPrep: https://www.nipreps.org/smriprep/
+.. _Nipype: https://nipype.readthedocs.io/
+.. _TemplateFlow: https://www.templateflow.org/
+.. _Connectome Workbench: https://www.humanconnectome.org/software/connectome-workbench
+
+
+.. containers
+
+.. _Docker: https://docs.docker.com/get-started/get-docker/
+.. _Apptainer: https://apptainer.org/docs/user/latest/
+.. _Neurodocker: https://github.com/ReproNim/neurodocker
+
+
+.. development
+
+.. _pre-commit: https://pre-commit.com/
+.. _Sphinx: https://www.sphinx-doc.org/
+.. _Graphviz: https://graphviz.org/

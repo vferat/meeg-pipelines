@@ -20,7 +20,8 @@ Version 0.1
 Enhancements
 ------------
 
-- xxx
+- Restructure the documentation with installation, pipeline, help and development
+  sections, by `Payam Sadeghi Shabestari`_.
 
 Bugs
 ----
@@ -36,3 +37,4 @@ Authors
 -------
 
 * `Mathieu Scheltienne`_
+* `Payam Sadeghi Shabestari`_

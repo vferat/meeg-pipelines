@@ -1,5 +1,7 @@
 # MEEG pipelines
 
+Full documentation: https://vferat.github.io/meeg-pipelines/dev/
+
 ## Installation
 
 MEEG pipelines are shipped as a docker images and can be run using either docker or apptainer.
@@ -32,13 +34,13 @@ Additional parameters can be added to the command:
 - `--nprocs`: to specify the number of processes to use (default: 1)
 - `--surface-src` instead of `--volume-src`: to use surface source space instead of volume source space.
 - `--pos`: when using a volume source space ( `--volume-src` flag), define the grid spacing in millimeters (default: 5mm).
-- `--bem-method`: to specify the BEM method to use, can be either `default`  to use the watershed_bem algorithm or `refined` to use a BEM model based on a refined brain mask.
+- `--bem-method`: to specify the BEM method to use, can be either `basic` (default) to use the watershed_bem algorithm or `refined` to use a BEM model based on a refined brain mask.
 
 #### Apptainer
 
-The command syntax is the same as the docker one, with the addition of the ``--apptainer`` flag:
+The command syntax is the same as the docker one, with the addition of the ``--engine apptainer`` option:
 ```bash
-meegpype-wrapper forward --apptainer PATH_TO_BIDS OUTPUT_DIR participant -w WORKING_DIR --volume-src --fs-license-file PATH_TO_FREESURFER_LICENSE_FILE
+meegpype-wrapper forward --engine apptainer PATH_TO_BIDS OUTPUT_DIR participant -w WORKING_DIR --volume-src --fs-license-file PATH_TO_FREESURFER_LICENSE_FILE
 ```
 
 

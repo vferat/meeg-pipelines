@@ -125,8 +125,9 @@ html_theme_options = {
     "json_url": f"{gh_pages_url}dev/_static/switcher.json",
     "version_match": version_match,
     },
-    "navbar_end": ["theme-switcher", "version-switcher"],
+    "navbar_end": ["theme-switcher", "version-switcher", "navbar-icon-links"],
     "footer_start": ["copyright"],
+    "use_edit_page_button": True,
     "icon_links": [
         {
             "name": "GitHub",
@@ -134,6 +135,14 @@ html_theme_options = {
             "icon": "fab fa-github-square",
         },
     ],
+}
+
+# "Edit on GitHub" button
+html_context = {
+    "github_user": gh_url.split("/")[-2],
+    "github_repo": gh_url.split("/")[-1],
+    "github_version": "main",
+    "doc_path": "doc",
 }
 
 # -- autosummary -----------------------------------------------------------------------
@@ -147,7 +156,7 @@ autoclass_content = "class"
 
 # -- intersphinx -----------------------------------------------------------------------
 intersphinx_mapping = get_intersphinx_mapping(
-    packages={"matplotlib", "mne", "numpy", "pandas", "python", "scipy"}
+    packages={"matplotlib", "mne", "mne_bids", "numpy", "pandas", "python", "scipy"}
 )
 intersphinx_mapping["nipype"] = ("https://nipype.readthedocs.io/en/latest/", None)
 intersphinx_timeout = 5
